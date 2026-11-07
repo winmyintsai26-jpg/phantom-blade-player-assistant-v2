@@ -26,4 +26,10 @@ for(const p of pages){
  await mkdir(path.dirname(destination),{recursive:true});
  await writeFile(destination,html,"utf8");
 }
+// Generate discoverable routes now; keep index.html's preview noindex until editorial acceptance.
+const origin="https://phantom-blade-player-assistant-v2.winmyintsai26.workers.dev";
+const routes=["/",...pages.map(p=>p.route)];
+const xml='<?xml version="1.0" encoding="utf-8"?>\\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\\n'+routes.map(route=>'  <url><loc>'+esc(origin+route)+'</loc></url>').join('\\n')+'\\n</urlset>\\n';
+await writeFile(path.join(output,"sitemap.xml"),xml.replaceAll("\\\\n","\\n"),"utf8");
+await writeFile(path.join(output,"robots.txt"),"User-agent: *\\nDisallow: /\\nSitemap: "+origin+"/sitemap.xml\\n","utf8");
 console.log("Pre-rendered "+pages.length+" deep-link pages.");
