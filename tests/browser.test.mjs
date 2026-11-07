@@ -4,7 +4,10 @@ import {spawn} from "node:child_process";
 import {chromium} from "playwright";
 
 const origin="http://127.0.0.1:4178";
-const server=spawn("npm",["run","dev","--","--host","127.0.0.1","--port","4178","--strictPort"],{stdio:"pipe"});
+// External promotional images and fonts must not block functional route QA.
+const openPage=(page,url)=>page.goto(url,{waitUntil:"domcontentloaded",timeout:20000});
+// Start Vite directly so SIGTERM cleans up the actual server, not only an npm parent process.
+const server=spawn(process.execPath,["./node_modules/vite/bin/vite.js","--host","127.0.0.1","--port","4178","--strictPort"],{stdio:"pipe"});
 let stderr="";
 server.stderr.on("data",d=>{stderr+=String(d)});
 async function waitForServer(){
@@ -22,11 +25,11 @@ try{
     await test("all nine region routes and home page render",async()=>{
       const page=await browser.newPage();
       const errors=[];page.on("pageerror",e=>errors.push(e.message));
-      await page.goto(origin+"/");
+      await openPage(page,origin+"/");
       assert.match(await page.locator("h1").innerText(),/Every obstacle/);
       assert.equal(await page.locator(".region-card").count(),9);
       for(const route of ["weeping-creek","crimson-forest","village-of-lu","pangzhen","mandate-encampment","meigu-lake","mountain-of-imprisonment","mirage-estate","mount-soulrend"]){
-        await page.goto(origin+"/regions/"+route+"/");
+        await openPage(page,origin+"/regions/"+route+"/");
         assert.equal(await page.locator(".region-page h1").count(),1,route);
         assert.equal(await page.locator(".region-cover img").count(),1,route);
         assert.equal(await page.locator(".region-hub").count(),1,route);
@@ -45,11 +48,11 @@ try{
       assert.deepEqual(errors,[]);
       await page.close();
     });
-    await test("all nine regions use distinct hero pictures",async()=>{const page=await browser.newPage();const images=[];for(const slug of ["weeping-creek","crimson-forest","village-of-lu","pangzhen","mandate-encampment","meigu-lake","mountain-of-imprisonment","mirage-estate","mount-soulrend"]){await page.goto(origin+"/regions/"+slug+"/");images.push(await page.locator(".region-cover img").getAttribute("src"));}assert.equal(new Set(images).size,9);await page.close();});
+    await test("all nine regions use distinct hero pictures",async()=>{const page=await browser.newPage();const images=[];for(const slug of ["weeping-creek","crimson-forest","village-of-lu","pangzhen","mandate-encampment","meigu-lake","mountain-of-imprisonment","mirage-estate","mount-soulrend"]){await openPage(page,origin+"/regions/"+slug+"/");images.push(await page.locator(".region-cover img").getAttribute("src"));}assert.equal(new Set(images).size,9);await page.close();});
     await test("all four homepage workspaces render complete steps with region links",async()=>{
       const page=await browser.newPage();
       for(const [slug,minimum] of [["healers-legacy",9],["ending-checkpoints",7],["missable-preflight",8],["combat-diagnostics",8]]){
-        await page.goto(origin+"/guides/"+slug+"/");
+        await openPage(page,origin+"/guides/"+slug+"/");
         assert.equal(await page.locator(".guide h1").count(),1,slug);
         assert.equal(await page.locator(".guide .step").count(),minimum,slug);
         assert.equal(await page.locator(".guide-stage").count(),minimum,slug);
@@ -60,14 +63,14 @@ try{
     await test("Player Help Center filters, diagnosis and feedback work",async()=>{
       const page=await browser.newPage();
       const errors=[];page.on("pageerror",e=>errors.push(e.message));
-      await page.goto(origin+"/help/");
+      await openPage(page,origin+"/help/");
       assert.equal(await page.locator(".help-card").count(),7);
       await page.locator("#problem-search").fill("Jing Ye");
       assert.equal(await page.locator(".help-card").count(),1);
       await page.locator("#problem-search").fill("");
       await page.locator("#problem-category").selectOption("Quests & Bugs");
       assert.equal(await page.locator(".help-card").count(),1);
-      await page.goto(origin+"/help/jing-ye-dismounted/");
+      await openPage(page,origin+"/help/jing-ye-dismounted/");
       assert.equal(await page.locator(".help-steps li").count(),5);
       await page.locator('[data-diagnosis="1"]').click();
       assert.match(await page.locator("#diagnosis-result").innerText(),/shield/i);
@@ -80,7 +83,7 @@ try{
       const page=await browser.newPage({viewport:{width:1366,height:768}});
       const errors=[];page.on("pageerror",e=>errors.push(e.message));
       for(const slug of ["jing-ye-dismounted","sha-chi-tower-base","red-seven-sword","combat-rhythm","pipa-ng-plus","drunken-sword","beginner-story"]){
-        const response=await page.goto(origin+"/help/"+slug+"/");
+        const response=await openPage(page,origin+"/help/"+slug+"/");
         assert.equal(response.status(),200,slug);
         assert.equal(await page.locator(".help-article h1").count(),1,slug);
         assert.ok(await page.locator(".help-steps li").count()>=3,slug);
@@ -93,7 +96,7 @@ try{
     });
     await test("feedback draft carries selected diagnosis and platform",async()=>{
       const page=await browser.newPage();
-      await page.goto(origin+"/help/jing-ye-dismounted/");
+      await openPage(page,origin+"/help/jing-ye-dismounted/");
       await page.locator('[data-diagnosis="1"]').click();
       await page.locator('[data-feedback="different"]').click();
       await page.locator("#feedback-platform").fill("PS5, version 1.0.1");
@@ -101,15 +104,16 @@ try{
       const popupPromise=page.waitForEvent("popup");
       await page.locator("#send-feedback").click();
       const popup=await popupPromise;
-      assert.match(decodeURIComponent(popup.url()),/Selected troubleshooting problem: I can get him off his horse/);
-      assert.match(decodeURIComponent(popup.url()),/PS5, version 1.0.1/);
-      assert.match(decodeURIComponent(popup.url()),/My situation is different/);
+      const prepared=decodeURIComponent(decodeURIComponent(popup.url())); // GitHub may redirect through login and double-encode the draft
+      assert.match(prepared,/Selected troubleshooting problem: I can get him off his horse/);
+      assert.match(prepared,/PS5, version 1.0.1/);
+      assert.match(prepared,/My situation is different/);
       await popup.close();await page.close();
     });
     await test("Player Help pages have no mobile horizontal overflow",async()=>{
       const page=await browser.newPage({viewport:{width:375,height:812},isMobile:true,hasTouch:true});
       for(const url of ["/help/","/help/sha-chi-tower-base/","/help/red-seven-sword/"]){
-        await page.goto(origin+url);
+        await openPage(page,origin+url);
         const sizes=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth}));
         assert.ok(sizes.scroll<=sizes.client+2,url+" overflow "+JSON.stringify(sizes));
       }
@@ -117,7 +121,7 @@ try{
     });
     await test("search, phase filters and progress survive reload",async()=>{
       const page=await browser.newPage();
-      await page.goto(origin+"/regions/weeping-creek/");
+      await openPage(page,origin+"/regions/weeping-creek/");
       assert.equal(await page.locator(".collectible-row").count(),61);
       await page.locator("#item-search").fill("Boulderguard");
       assert.equal(await page.locator(".collectible-row").count(),1);
@@ -131,9 +135,10 @@ try{
       assert.match(await page.locator("#item-progress").innerText(),/1 \/ 61/);
       await page.reload();
       assert.equal(await page.locator('[data-item-id="weeping-creek:1"]').isChecked(),true);
-      await page.goto(origin+"/regions/crimson-forest/");
-      assert.equal(await page.locator('[data-item-id="crimson-forest:1"]').count(),0);
-      await page.goto(origin+"/regions/weeping-creek/");
+      await openPage(page,origin+"/regions/crimson-forest/");
+      assert.equal(await page.locator('[data-item-id="weeping-creek:1"]').count(),0,"weeping item must not leak into Crimson Forest");
+      assert.equal(await page.locator('[data-item-id="crimson-forest:1"]').count(),1,"Crimson Forest should retain its own numbered first entry");
+      await openPage(page,origin+"/regions/weeping-creek/");
       await page.locator('[data-item-id="weeping-creek:1"]').uncheck();
       await page.reload();
       assert.equal(await page.locator('[data-item-id="weeping-creek:1"]').isChecked(),false);
@@ -141,7 +146,7 @@ try{
     });
     await test("Weeping Creek dashboard and route modes keep saved progress intact",async()=>{
       const page=await browser.newPage();
-      await page.goto(origin+"/regions/weeping-creek/");
+      await openPage(page,origin+"/regions/weeping-creek/");
       assert.equal(await page.locator(".region-hub").count(),1);
       assert.equal(await page.locator(".region-jump a").count(),6);
       assert.equal(await page.locator(".route-stage").count(),2);
@@ -154,7 +159,8 @@ try{
       assert.ok(await page.locator(".collectible-row").count()>0);
       await page.locator('[data-route-mode="remaining"]').click();
       assert.equal(await page.locator(".collectible-row").count(),61);
-      await page.locator('[data-item-id="weeping-creek:1"]').check();
+      // The Not found view removes checked rows synchronously, so click instead of check() (which expects the element to remain).
+      await page.locator('[data-item-id="weeping-creek:1"]').evaluate(input=>input.click());
       assert.equal(await page.locator('[data-item-id="weeping-creek:1"]').count(),0);
       await page.locator("#clear-item-filters").click();
       assert.equal(await page.locator(".collectible-row").count(),61);
@@ -166,20 +172,21 @@ try{
     });
     await test("correction report produces a prefilled GitHub link",async()=>{
       const page=await browser.newPage();
-      await page.goto(origin+"/regions/village-of-lu/");
+      await openPage(page,origin+"/regions/village-of-lu/");
       await page.locator("#feedback-item").fill("#70");
       await page.locator("#feedback-details").fill("The item was not present after following the described route.");
       const popupPromise=page.waitForEvent("popup");
       await page.locator("#report-issue").click();
       const popup=await popupPromise;
-      await popup.waitForURL(/github.com/,{timeout:5000}).catch(()=>{});assert.match(popup.url(),/github.com\/winmyintsai26-jpg\/phantom-blade-player-assistant-v2\/issues\/new/);
-      assert.match(decodeURIComponent(popup.url()),/Village of Lu/);
+      await popup.waitForURL(/github.com/,{timeout:5000}).catch(()=>{});const draftUrl=decodeURIComponent(decodeURIComponent(popup.url()));
+      assert.match(draftUrl,/github.com\/winmyintsai26-jpg\/phantom-blade-player-assistant-v2\/issues\/new/);
+      assert.match(draftUrl,/Village of Lu/);
       await popup.close();await page.close();
     });
     await test("mobile layout has no horizontal overflow on home and region",async()=>{
       const page=await browser.newPage({viewport:{width:375,height:812},isMobile:true,hasTouch:true});
       for(const path of ["/","/regions/weeping-creek/","/regions/village-of-lu/"]){
-        await page.goto(origin+path);
+        await openPage(page,origin+path);
         const sizes=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth}));
         assert.ok(sizes.scroll<=sizes.client+2,path+" overflow "+JSON.stringify(sizes));
       }
