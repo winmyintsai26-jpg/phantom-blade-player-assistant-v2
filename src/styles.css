@@ -151,3 +151,10 @@
 .video-research-list a{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
 .video-research-list a strong{font-size:16px;line-height:1.35}
 .video-research{scroll-margin-top:25px}
+
+/* Four workspace steps: useful context without overwhelming the checklist. */
+.guide-stage{display:inline-block;font-size:11px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;color:#d6bb90;margin:0 9px 9px 0}
+.guide-risk{display:inline-block;font-size:10px;font-weight:750;letter-spacing:.04em;text-transform:uppercase;color:#f2be85;padding:4px 8px;margin-bottom:8px;background:rgba(169,103,45,.14);border:1px solid rgba(216,155,83,.4);border-radius:4px}
+.guide-step-link{display:inline-block;margin:13px 0 16px;color:#e7bb81;font-size:13px;text-decoration:underline;text-underline-offset:3px}
+.guide-step-link:hover{color:#ffe1b5}
+.step[id^="guide-step-"]{scroll-margin-top:24px}
