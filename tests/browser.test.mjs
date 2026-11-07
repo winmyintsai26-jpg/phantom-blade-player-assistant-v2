@@ -76,6 +76,36 @@ try{
       assert.deepEqual(errors,[]);
       await page.close();
     });
+    await test("all seven help deep links render and survive direct reload",async()=>{
+      const page=await browser.newPage({viewport:{width:1366,height:768}});
+      const errors=[];page.on("pageerror",e=>errors.push(e.message));
+      for(const slug of ["jing-ye-dismounted","sha-chi-tower-base","red-seven-sword","combat-rhythm","pipa-ng-plus","drunken-sword","beginner-story"]){
+        const response=await page.goto(origin+"/help/"+slug+"/");
+        assert.equal(response.status(),200,slug);
+        assert.equal(await page.locator(".help-article h1").count(),1,slug);
+        assert.ok(await page.locator(".help-steps li").count()>=3,slug);
+        assert.ok(await page.locator(".diagnosis-option").count()>=2,slug);
+        await page.reload();
+        assert.equal(await page.locator(".help-article").count(),1,slug+" on reload");
+      }
+      assert.deepEqual(errors,[]);
+      await page.close();
+    });
+    await test("feedback draft carries selected diagnosis and platform",async()=>{
+      const page=await browser.newPage();
+      await page.goto(origin+"/help/jing-ye-dismounted/");
+      await page.locator('[data-diagnosis="1"]').click();
+      await page.locator('[data-feedback="different"]').click();
+      await page.locator("#feedback-platform").fill("PS5, version 1.0.1");
+      await page.locator("#feedback-detail").fill("I can dismount but the shield never breaks.");
+      const popupPromise=page.waitForEvent("popup");
+      await page.locator("#send-feedback").click();
+      const popup=await popupPromise;
+      assert.match(decodeURIComponent(popup.url()),/Selected troubleshooting problem: I can get him off his horse/);
+      assert.match(decodeURIComponent(popup.url()),/PS5, version 1.0.1/);
+      assert.match(decodeURIComponent(popup.url()),/My situation is different/);
+      await popup.close();await page.close();
+    });
     await test("Player Help pages have no mobile horizontal overflow",async()=>{
       const page=await browser.newPage({viewport:{width:375,height:812},isMobile:true,hasTouch:true});
       for(const url of ["/help/","/help/sha-chi-tower-base/","/help/red-seven-sword/"]){
