@@ -4,7 +4,8 @@ import {spawn} from "node:child_process";
 import {chromium} from "playwright";
 
 const origin="http://127.0.0.1:4178";
-const server=spawn("npm",["run","dev","--","--host","127.0.0.1","--port","4178","--strictPort"],{stdio:"pipe"});
+// Start Vite directly so SIGTERM cleans up the actual server, not only an npm parent process.
+const server=spawn(process.execPath,["./node_modules/vite/bin/vite.js","--host","127.0.0.1","--port","4178","--strictPort"],{stdio:"pipe"});
 let stderr="";
 server.stderr.on("data",d=>{stderr+=String(d)});
 async function waitForServer(){
