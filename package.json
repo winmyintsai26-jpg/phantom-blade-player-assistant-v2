@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "node --test tests/guides.test.mjs tests/progress.test.mjs",
     "check": "npm run test && npm run build",
-    "test:browser": "node --test tests/browser.test.mjs"
+    "test:browser": "node --test tests/browser.test.mjs",
+    "test:build": "node --test tests/build.test.mjs"
   },
   "devDependencies": {
     "vite": "^7.1.0",
