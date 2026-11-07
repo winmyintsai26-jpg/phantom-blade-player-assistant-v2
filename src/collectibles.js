@@ -20,7 +20,7 @@ export const collectibles=[
 ["weeping-creek",17,"Purge the Sect","Tale","Outpost rooftop","Speak with the Brooding Old Archer on the roof before defeating the Crimson Forest region boss.","Missable"],
 ["weeping-creek",19,"Festering Secrets","Tale","Outpost Forge","Speak with Forge and approach the nearby guards; finish before the Crimson Forest region boss.","Missable"],
 ["weeping-creek",25,"Apprentice Healer","Tale","Outpost","Ask Yu'er about collecting herbs; complete before defeating Jing Ye in Crimson Forest.","Missable"],
-["weeping-creek",27,"Boulderguard","Accessory","Axemaster's Holding Cell","After speaking with the informant near the Outpost archer, inspect the grave by the walkway from Holding Cell Bell; the informant disappears after the Crimson Forest boss.","Missable"],
+["weeping-creek",27,"Boulderguard","Accessory","Axemaster's Holding Cell","First speak to the Petrified Mandate Disciple in the Outpost barn and exhaust the grave dialogue. Then fast-travel to The Axemaster’s Holding Cell Bell, follow the walkway, and investigate the grave for Boulderguard. Prioritize the NPC conversation before advancing the story; players report that the grave reward can still be collected later if the dialogue was completed.","Missable"],
 ["weeping-creek",29,"Creek Valley Plains Entrance","Bell","Creek Valley Plains","Cross the bridge beyond Axemaster's Holding Cell.","First visit"],
 ["weeping-creek",31,"Token of Pursuit","Accessory","Ruthless Archer Camp","Open the chest near the archers after clearing the camp.","First visit"],
 ["weeping-creek",32,"Ruthless Archer Camp","Bell","Ruthless Archer Camp","At the top of the stairs from the archer camp.","First visit"],
