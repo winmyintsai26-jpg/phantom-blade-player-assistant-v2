@@ -90,3 +90,28 @@ test("workspace deep links lead to existing guide or region",()=>{
    else assert.ok(path.startsWith("/guides/")&&getGuide(path.split("/")[2]),step.link);
  }
 });
+
+import {problems,helpCategories,getProblem,findProblems} from "../src/help-problems.js";
+test("Player Help Center covers all six categories with unique usable problem routes",()=>{
+ assert.equal(helpCategories.length,6);
+ assert.deepEqual(new Set(problems.map(p=>p.id)).size,problems.length);
+ assert.deepEqual(new Set(problems.map(p=>p.category)).size,6);
+ for(const p of problems){
+  assert.match(p.id,/^[a-z0-9-]+$/);
+  assert.ok(p.title&&p.summary.length>30&&p.cause.length>30,p.id);
+  assert.ok(p.prerequisites.length>0&&p.steps.length>=3,p.id);
+  assert.ok(p.choices.length>=2&&p.mistakes.length>0&&p.troubleshooting.length>0,p.id);
+  assert.ok(p.steps.every(s=>s.title&&s.body.length>40&&s.check.length>25),p.id);
+  assert.ok(p.links.every(l=>l.url.startsWith("/")||l.url.startsWith("https://")),p.id);
+ }
+ assert.equal(getProblem("jing-ye-dismounted").choices.length,4);
+ assert.equal(getProblem("sha-chi-tower-base").choices.length,5);
+ assert.ok(getProblem("pipa-ng-plus").status.includes("unverified"));
+});
+test("Help Center search and categories find the right issue",()=>{
+ assert.ok(findProblems("Jing Ye").some(x=>x.id==="jing-ye-dismounted"));
+ assert.ok(findProblems("crank","Map Exploration & Navigation").some(x=>x.id==="sha-chi-tower-base"));
+ assert.ok(findProblems("pipa").some(x=>x.id==="pipa-ng-plus"));
+ assert.deepEqual(findProblems("unlikely-word-8828"),[]);
+});
+test("related player problem links resolve",()=>{for(const p of problems)for(const id of p.related||[])assert.ok(getProblem(id),id)});
