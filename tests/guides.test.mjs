@@ -13,3 +13,5 @@ test("regional checkpoint IDs are unique and actionable",()=>{const points=allCh
 import {collectibles,regionCollectibles} from "../src/collectibles.js";
 test("collectible routes have unique identifiers and valid regions",()=>{assert.ok(collectibles.length>=30);assert.equal(new Set(collectibles.map(c=>c.id)).size,collectibles.length);for(const c of collectibles){assert.ok(findRegion(c.region));assert.ok(c.name&&c.area&&c.direction.length>20);assert.ok(Number.isInteger(c.sourceNumber));}});
 test("region collectible filtering is correctly scoped",()=>{assert.equal(regionCollectibles("village-of-lu").length,0);assert.ok(regionCollectibles("crimson-forest").every(c=>c.region==="crimson-forest"));});
+
+test("Village of Lu has actionable route data and missable checkpoints",()=>{const entries=regionCollectibles("village-of-lu");assert.ok(entries.length>=35);assert.ok(entries.some(c=>c.sourceNumber===70&&c.phase==="Missable"));assert.ok(findRegion("village-of-lu").checkpoints.length>=5);});
