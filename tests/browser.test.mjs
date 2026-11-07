@@ -62,6 +62,8 @@ try{
       await page.goto(origin+"/regions/weeping-creek/");
       assert.equal(await page.locator(".region-hub").count(),1);
       assert.equal(await page.locator(".region-jump a").count(),5);
+      assert.equal(await page.locator(".route-stage").count(),2);
+      assert.match(await page.locator(".route-stage").last().innerText(),/CLEANUP VISITS/);
       assert.equal(await page.locator(".collectible-row").count(),61);
       await page.locator('[data-route-mode="missable"]').click();
       assert.ok(await page.locator(".collectible-row").count()>0);
