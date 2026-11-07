@@ -30,11 +30,14 @@ try{
         assert.equal(await page.locator(".region-page h1").count(),1,route);
         assert.equal(await page.locator(".region-cover img").count(),1,route);
         assert.equal(await page.locator(".region-hub").count(),1,route);
-        assert.equal(await page.locator(".region-jump a").count(),5,route);
+        assert.equal(await page.locator(".region-jump a").count(),6,route);
         assert.equal(await page.locator("#before-bosses").count(),1,route);
         assert.equal(await page.locator("#critical-checkpoints").count(),1,route);
         assert.equal(await page.locator("#collectible-route").count(),1,route);
         assert.equal(await page.locator("#research-reference").count(),1,route);
+        assert.equal(await page.locator("#region-videos").count(),1,route);
+        assert.ok(await page.locator("#region-videos .video-research-list a").count()>=2,route);
+        assert.equal(await page.locator("#region-videos a[href*=\"youtube.com/results\"]").count(),2,route);
         assert.equal(await page.locator(route==="weeping-creek"?"#weeping-routes":"#regional-tales").count(),1,route);
         assert.ok(await page.locator(".region-cover").evaluate(el=>el.compareDocumentPosition(document.querySelector(".region-page .pills")) & Node.DOCUMENT_POSITION_FOLLOWING),route+" cover not before route stats");
         assert.ok(await page.locator(".collectible-row").count()>0,route);
@@ -71,7 +74,7 @@ try{
       const page=await browser.newPage();
       await page.goto(origin+"/regions/weeping-creek/");
       assert.equal(await page.locator(".region-hub").count(),1);
-      assert.equal(await page.locator(".region-jump a").count(),5);
+      assert.equal(await page.locator(".region-jump a").count(),6);
       assert.equal(await page.locator(".route-stage").count(),2);
       assert.match(await page.locator(".route-stage").last().innerText(),/CLEANUP VISITS/);
       assert.equal(await page.locator(".collectible-row").count(),61);
