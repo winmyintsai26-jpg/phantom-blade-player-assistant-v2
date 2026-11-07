@@ -16,3 +16,6 @@ jobs:
       - run: npm run test:build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
+      - name: Attempt live Cloudflare smoke check (non-blocking)
+        run: node scripts/live-smoke.mjs
+        continue-on-error: true
