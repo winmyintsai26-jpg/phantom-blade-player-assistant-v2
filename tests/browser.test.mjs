@@ -29,6 +29,13 @@ try{
         await page.goto(origin+"/regions/"+route+"/");
         assert.equal(await page.locator(".region-page h1").count(),1,route);
         assert.equal(await page.locator(".region-cover img").count(),1,route);
+        assert.equal(await page.locator(".region-hub").count(),1,route);
+        assert.equal(await page.locator(".region-jump a").count(),5,route);
+        assert.equal(await page.locator("#before-bosses").count(),1,route);
+        assert.equal(await page.locator("#critical-checkpoints").count(),1,route);
+        assert.equal(await page.locator("#collectible-route").count(),1,route);
+        assert.equal(await page.locator("#research-reference").count(),1,route);
+        assert.equal(await page.locator(route==="weeping-creek"?"#weeping-routes":"#regional-tales").count(),1,route);
         assert.ok(await page.locator(".region-cover").evaluate(el=>el.compareDocumentPosition(document.querySelector(".region-page .pills")) & Node.DOCUMENT_POSITION_FOLLOWING),route+" cover not before route stats");
         assert.ok(await page.locator(".collectible-row").count()>0,route);
       }
