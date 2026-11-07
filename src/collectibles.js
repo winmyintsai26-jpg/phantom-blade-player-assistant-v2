@@ -52,6 +52,8 @@ export const collectibles=[
 ["weeping-creek",59,"Scavenger Pens","Bell","Crimson Manor underground","Descend through the manor to the wooden platform underground.","Return visit"],
 ["weeping-creek",60,"Alloyed Scythe Blade","Tempering Material","Scavenger Pens","Defeat The Puppet Scavenger and Acolyte Hansui.","Return visit"],
 ["weeping-creek",61,"Pigeon Feed","Tempering Material","Weeping Creek Long Pillar","Return with Tiger Cannon and destroy the nearby wall.","Return visit"],
+["weeping-creek",24,"Sha-Chi Amber Fragment","Material","Outpost barricade","Break the barricade by Outpost Bell, enter the upper house, and clear the enemies.","First visit"],
+["weeping-creek",26,"Axemaster’s Holding Cell","Bell","Axemaster’s Holding Cell","Activate the bell after the cutscene with The Hunt.","Story"],
 ["weeping-creek",18,"Sanguine Reach","Weapon","Outpost","Check the weapon rack immediately behind Forge.","First visit"],
 ["weeping-creek",20,"Outpost Bell","Bell","Outpost","The bell is beside Forge.","First visit"],
 ["weeping-creek",21,"Blackstone Fragment","Material","Outpost","Find the Cell Key on a body in the courtyard above the Outpost Bell; return to the cave below the entrance gate and unlock the cell.","First visit"],
