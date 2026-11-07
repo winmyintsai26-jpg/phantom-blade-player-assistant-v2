@@ -39,7 +39,7 @@ try{
         assert.ok(await page.locator("#region-videos .video-research-list a").count()>=2,route);
         assert.equal(await page.locator("#region-videos a[href*=\"youtube.com/results\"]").count(),2,route);
         assert.equal(await page.locator(route==="weeping-creek"?"#weeping-routes":"#regional-tales").count(),1,route);
-        assert.ok(await page.locator(".region-cover").evaluate(el=>el.compareDocumentPosition(document.querySelector(".region-page .pills")) & Node.DOCUMENT_POSITION_FOLLOWING),route+" cover not before route stats");
+        assert.ok(await page.locator(".region-cover").evaluate(el=>document.querySelector(".region-page .pills").compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING),route+" cover must follow region heading and stats");
         assert.ok(await page.locator(".collectible-row").count()>0,route);
       }
       assert.deepEqual(errors,[]);
