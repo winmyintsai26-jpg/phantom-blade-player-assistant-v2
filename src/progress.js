@@ -33,8 +33,7 @@ export function restoreProgressBackup(storage,backup){
   }
   const updates=entries.map(([id,steps])=>[PREFIX+id,JSON.stringify(sanitizeProgress(id,steps))]);
   // Merge existing progress rather than deleting/checking off unrelated saved work.
-  for(const [key,raw] of updates){const id=key.slice(PREFIX.length);const incoming=JSON.parse(raw);updates.splice(updates.findIndex(([k])=>k===key),1,[key,JSON.stringify(sanitizeProgress(id,[...parseProgress(id,storage.getItem(key)),...incoming]))]);}
-  for(const [key,value] of updates)storage.setItem(key,value);
+  for(const [key,value] of updates){const id=key.slice(PREFIX.length);storage.setItem(key,JSON.stringify(sanitizeProgress(id,[...parseProgress(id,storage.getItem(key)),...JSON.parse(value)])));}
   if(backup.settings?.showSpoilers===true)storage.setItem(SPOILER_KEY,"true");
   return entries.length;
 }
