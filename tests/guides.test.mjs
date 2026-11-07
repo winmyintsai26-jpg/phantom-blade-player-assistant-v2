@@ -20,3 +20,6 @@ test("all nine regions have sourced collectible directions",()=>{for(const regio
 
 test("Weeping Creek numbered collectible route is complete and unique",()=>{const entries=regionCollectibles("weeping-creek");assert.equal(entries.length,61);assert.deepEqual(entries.map(x=>x.sourceNumber).sort((a,b)=>a-b),Array.from({length:61},(_,i)=>i+1));});
 test("all source-backed entries have useful labels and directions",()=>{for(const c of collectibles){assert.ok(c.name&&c.type&&c.area&&c.direction.length>=25,c.id);assert.ok(["First visit","Story","Missable","Return visit","Prerequisite"].includes(c.phase),c.id);}});
+
+test("every selected route is ordered and bounded by its source numbering",()=>{for(const r of regions){const entries=regionCollectibles(r.id);assert.deepEqual(entries.map(x=>x.sourceNumber),entries.map(x=>x.sourceNumber).sort((a,b)=>a-b),r.id);assert.equal(new Set(entries.map(x=>x.sourceNumber)).size,entries.length,r.id);}});
+test("first three regions have explicit missable checkpoints",()=>{for(const id of ["weeping-creek","crimson-forest","village-of-lu"]){const r=findRegion(id);assert.ok(r.checkpoints.some(x=>x.risk==="Missable"),id);assert.ok(regionCollectibles(id).some(x=>x.phase==="Missable"),id);}});
