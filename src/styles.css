@@ -158,3 +158,37 @@
 .guide-step-link{display:inline-block;margin:13px 0 16px;color:#e7bb81;font-size:13px;text-decoration:underline;text-underline-offset:3px}
 .guide-step-link:hover{color:#ffe1b5}
 .step[id^="guide-step-"]{scroll-margin-top:24px}
+
+/* Player Help Center reuses V2's typography and dark design system. */
+.help-feature{display:flex;gap:15px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:20px 0 38px;padding:23px;border:1px solid rgba(205,166,104,.37);border-radius:9px;background:linear-gradient(120deg,rgba(181,125,63,.12),rgba(20,27,35,.3))}
+.help-feature h2{margin:5px 0;font-size:26px}.help-feature p{flex-basis:100%;margin:0;color:#c6cbd1}.help-feature .primary{margin-left:auto}
+.help-shell{max-width:1130px;margin:32px auto 90px}.help-shell h1{font-size:clamp(30px,5vw,52px);line-height:1.16;margin:12px 0}.help-shell .intro{max-width:790px;line-height:1.7}
+.help-searchbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,240px);gap:11px;margin:26px 0 10px}
+.help-searchbar input,.help-searchbar select{padding:14px 15px;background:#16212a;color:#f4f0e8;border:1px solid #44515c;border-radius:6px;font:inherit}
+.help-cards,.help-related{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:17px}
+.help-card{display:flex;flex-direction:column;gap:9px;padding:21px;border-radius:9px;border:1px solid rgba(209,168,105,.29);background:rgba(255,255,255,.025);text-decoration:none;color:#e9e6e0;min-width:0}
+.help-card:hover,.help-card:focus-visible{border-color:#edc48a;background:rgba(209,168,105,.065)}
+.help-card h3{font-size:20px;line-height:1.32;margin:0}.help-card p{font-size:13px;line-height:1.6;margin:0;color:#bdc6cd}.help-card small{color:#b2b9c0;margin-top:auto;line-height:1.5}
+.help-category{font-size:11px;color:#e7bc84;font-weight:800;letter-spacing:.09em;text-transform:uppercase}
+.help-article{max-width:920px}.help-article .pills{margin:17px 0}.help-jump{display:flex;flex-wrap:wrap;gap:9px;margin:22px 0}
+.help-jump a{padding:10px 14px;border-radius:6px;border:1px solid rgba(214,171,108,.32);color:#ead0ab;text-decoration:none;font-size:12px}
+.help-jump a:hover{background:rgba(214,171,108,.1)}
+.help-panel{margin:22px 0;padding:22px;border:1px solid rgba(209,168,105,.26);border-radius:9px;background:rgba(255,255,255,.018);scroll-margin-top:24px}
+.help-panel h2{margin:0 0 15px;font-size:24px}.help-panel h3{font-size:18px;margin:10px 0}.help-panel p,.help-panel li{line-height:1.65}
+.help-panel li{margin:8px 0}.help-panel ul{padding-left:23px}
+.diagnosis-options,.feedback-choices{display:flex;gap:8px;flex-wrap:wrap;margin:17px 0}
+.diagnosis-option,.feedback-choices button,.help-feedback>button{background:rgba(219,171,104,.07);border:1px solid rgba(219,171,104,.34);color:#e8d6b7;border-radius:6px;font:inherit;font-size:13px;padding:10px 12px;cursor:pointer;text-align:left}
+.diagnosis-option[aria-pressed=true],.feedback-choices button[aria-pressed=true]{background:#dab17b;color:#191e22;font-weight:800}
+.diagnosis-option:hover,.feedback-choices button:hover{border-color:#f2c893}
+.diagnosis-option:focus-visible,.feedback-choices button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+#diagnosis-result{padding:15px;margin:15px 0 0;border:1px solid rgba(208,175,124,.24);border-radius:5px}
+.help-steps{list-style:decimal;margin:0;padding-left:27px}.help-steps>li{padding:13px 3px 16px;border-bottom:1px solid rgba(255,255,255,.085)}
+.help-check{font-size:13px;color:#e0bf8d}.help-check b{color:#f3d9a8}
+.help-sources{display:flex;flex-direction:column;gap:11px}.help-sources a{color:#e3bd83;line-height:1.6}
+.help-related .help-card h3{font-size:16px}
+.help-feedback label{display:block;margin:15px 0 9px;font-size:13px;font-weight:600}
+.help-feedback textarea{display:block;width:100%;box-sizing:border-box;min-height:100px;background:#101921;color:#f0ebdf;border:1px solid #44515c;border-radius:6px;padding:12px;font:inherit}
+.help-feedback>button{margin-top:13px;background:#dcb47b;color:#171b1e;font-weight:750}
+.help-feedback>button:disabled{opacity:.4;cursor:not-allowed}
+#feedback-help{font-size:12px;color:#bec7ce}
+@media(max-width:700px){.help-searchbar,.help-cards,.help-related{grid-template-columns:minmax(0,1fr)}.help-shell{margin:24px auto 65px}.help-panel{padding:15px}.help-feature .primary{margin:4px 0 0}.help-feature h2{font-size:23px}}
