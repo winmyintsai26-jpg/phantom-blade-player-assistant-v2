@@ -19,5 +19,6 @@ jobs:
       - name: Browser tests (bounded)
         run: timeout --signal=SIGTERM 180s npm run test:browser
       - name: Attempt live Cloudflare smoke check (non-blocking)
+        if: ${{ always() }}
         run: node scripts/live-smoke.mjs
         continue-on-error: true
