@@ -30,3 +30,9 @@ Never copy third-party walkthrough screenshots without a reuse license or explic
 ## Player feedback
 
 Region pages prepare prefilled GitHub correction issues. Players must sign in to GitHub and submit them. This is not an anonymous inbox. Review and verify reports before changing the guide.
+
+## Automated browser coverage
+
+Run `npm install`, `npx playwright install chromium`, and `npm run test:browser`. GitHub Actions now runs these Chromium checks after `npm run check`. The browser suite visits all nine regions and checks search, phase filters, found-state persistence, correction-report links and mobile horizontal overflow.
+
+Automated browser tests cannot validate gameplay accuracy, third-party image licensing, or a Cloudflare production deployment. A passing GitHub workflow is required before release, and a live production smoke test must still be performed after deployment.
