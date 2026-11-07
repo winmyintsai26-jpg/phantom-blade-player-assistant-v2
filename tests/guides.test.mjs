@@ -15,3 +15,5 @@ test("collectible routes have unique identifiers and valid regions",()=>{assert.
 test("region collectible filtering is correctly scoped",()=>{assert.equal(regionCollectibles("village-of-lu").length,0);assert.ok(regionCollectibles("crimson-forest").every(c=>c.region==="crimson-forest"));});
 
 test("Village of Lu has actionable route data and missable checkpoints",()=>{const entries=regionCollectibles("village-of-lu");assert.ok(entries.length>=35);assert.ok(entries.some(c=>c.sourceNumber===70&&c.phase==="Missable"));assert.ok(findRegion("village-of-lu").checkpoints.length>=5);});
+
+test("all nine regions have sourced collectible directions",()=>{for(const region of regions){const entries=regionCollectibles(region.id);assert.ok(entries.length>0,region.id);assert.ok(region.collectibles>0,region.id);assert.ok(region.checkpoints.length>0,region.id);}});
