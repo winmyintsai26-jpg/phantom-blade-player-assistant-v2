@@ -7,7 +7,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vite build && node scripts/prerender.mjs",
     "preview": "vite preview",
-    "test": "node --test tests/*.test.mjs",
+    "test": "node --test tests/guides.test.mjs tests/progress.test.mjs",
     "check": "npm run test && npm run build",
     "test:browser": "node --test tests/browser.test.mjs"
   },
