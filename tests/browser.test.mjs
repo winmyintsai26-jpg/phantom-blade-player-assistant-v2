@@ -57,6 +57,29 @@ try{
       assert.equal(await page.locator('[data-item-id="weeping-creek:1"]').isChecked(),false);
       await page.close();
     });
+    await test("Weeping Creek dashboard and route modes keep saved progress intact",async()=>{
+      const page=await browser.newPage();
+      await page.goto(origin+"/regions/weeping-creek/");
+      assert.equal(await page.locator(".region-hub").count(),1);
+      assert.equal(await page.locator(".region-jump a").count(),5);
+      assert.equal(await page.locator(".collectible-row").count(),61);
+      await page.locator('[data-route-mode="missable"]').click();
+      assert.ok(await page.locator(".collectible-row").count()>0);
+      assert.equal(await page.locator('.collectible-row .collectible-tags span:nth-child(2)').filter({hasNotText:"Missable"}).count(),0);
+      await page.locator('[data-route-mode="return"]').click();
+      assert.ok(await page.locator(".collectible-row").count()>0);
+      await page.locator('[data-route-mode="remaining"]').click();
+      assert.equal(await page.locator(".collectible-row").count(),61);
+      await page.locator('[data-item-id="weeping-creek:1"]').check();
+      assert.equal(await page.locator('[data-item-id="weeping-creek:1"]').count(),0);
+      await page.locator("#clear-item-filters").click();
+      assert.equal(await page.locator(".collectible-row").count(),61);
+      assert.equal(await page.locator('[data-item-id="weeping-creek:1"]').isChecked(),true);
+      assert.equal(await page.locator(".guide-collection").count(),2);
+      await page.locator(".guide-collection").first().locator("summary").click();
+      assert.ok(await page.locator(".guide-collection").first().locator(".route-summary").count()>0);
+      await page.close();
+    });
     await test("correction report produces a prefilled GitHub link",async()=>{
       const page=await browser.newPage();
       await page.goto(origin+"/regions/village-of-lu/");
