@@ -165,4 +165,4 @@ export const collectibles=[
 ["mount-soulrend",5,"Bonesaw","Weapon","Giant's Lair","Defeat The Crusher and the Saw.","Story"],
 ["mount-soulrend",6,"Aureate","Weapon","The Fallen Dream","Defeat Zho Shang in the true-ending branch.","Prerequisite"]
 ].map(([region,sourceNumber,name,type,area,direction,phase])=>({id:region+":"+sourceNumber,region,sourceNumber,name,type,area,direction,phase}));
-export const regionCollectibles=id=>collectibles.filter(c=>c.region===id);
+export const regionCollectibles=id=>collectibles.filter(c=>c.region===id).sort((a,b)=>a.sourceNumber-b.sourceNumber);
