@@ -22,3 +22,7 @@ jobs:
         if: ${{ always() }}
         run: node scripts/live-smoke.mjs
         continue-on-error: true
+      - name: Probe live Cloudflare interactive behavior (non-blocking)
+        if: ${{ always() }}
+        run: timeout --signal=SIGTERM 90s node scripts/live-browser-smoke.mjs
+        continue-on-error: true
