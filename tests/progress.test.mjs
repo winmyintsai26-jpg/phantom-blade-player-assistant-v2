@@ -31,6 +31,12 @@ test("next action points to earliest unmet critical checkpoint, then an item",()
  const first=nextAction(()=>[]);
  assert.equal(first.region.id,"weeping-creek");
  assert.match(first.href,/^\/regions\/weeping-creek\/#checkpoint-/);
+ const critical=regions[0].checkpoints.map((c,i)=>({c,i})).filter(({c})=>/Missable|Point of no return/.test(c.risk)).map(({i})=>i);
+ for(let n=0;n<critical.length;n++){
+   const partial=critical.slice(0,n);
+   const action=nextAction(id=>id==="region-weeping-creek"?partial:[]);
+   assert.equal(action.href,"/regions/weeping-creek/#checkpoint-"+critical[n],"next critical warning must come before collectibles");
+ }
  const next=nextAction(id=>id==="region-weeping-creek"?regions[0].checkpoints.map((_,i)=>i):[]);
  assert.equal(next.region.id,"weeping-creek");
  assert.ok(next.href.includes("#item-"));
