@@ -27,3 +27,33 @@ test("first three regions have explicit missable checkpoints",()=>{for(const id 
 import {collectibleArt} from "../src/item-art.js";
 test("item art only appears on exact source-backed entries",()=>{for(const c of collectibles){const art=collectibleArt(c.id);if(!art)continue;assert.equal(new URL(art.src).protocol,"https:");assert.equal(new URL(art.source).hostname,"pbz.gg");assert.match(art.src,/\/media\/game\//);assert.match(art.source,/^https:\/\/pbz\.gg\//);}});
 test("Boulderguard and key early equipment have item pictures",()=>{for(const id of ["weeping-creek:4","weeping-creek:6","weeping-creek:8","weeping-creek:27","weeping-creek:48"])assert.ok(collectibleArt(id),id);assert.equal(collectibleArt("weeping-creek:1"),null);});
+
+import {weepingPreflight,weepingRouteSteps} from "../src/weeping-playbook.js";
+import {weepingEvidence} from "../src/weeping-evidence.js";
+test("Weeping Creek preflight links resolve to real numbered routes and checkpoints",()=>{
+  const region=findRegion("weeping-creek");
+  const sourceNumbers=new Set(regionCollectibles(region.id).map(c=>c.sourceNumber));
+  assert.ok(weepingPreflight.length>=4);
+  for(const p of weepingPreflight){
+    assert.ok(p.title&&p.detail.length>60);
+    assert.ok(sourceNumbers.has(p.route),String(p.route));
+    assert.ok(region.checkpoints[p.checkpoint],String(p.checkpoint));
+    assert.equal(new URL(p.source).protocol,"https:");
+    assert.match(p.confidence,/Source-documented/);
+  }
+});
+test("Weeping Creek multi-stage tales have chronological actionable instructions",()=>{
+  for(const key of ["four-fierce-axes","festering-secret","apprentice-healer","severed-mindseal"]){
+    const steps=weepingRouteSteps[key];
+    assert.ok(steps.length>=3,key);
+    assert.ok(steps.every(x=>x.length>35),key);
+  }
+  assert.match(weepingRouteSteps["severed-mindseal"].join(" "),/unknown/i);
+});
+test("Weeping Creek boss/tale evidence never claims independent game verification",()=>{
+  assert.ok(weepingEvidence.bosses.length>=4);
+  assert.ok(weepingEvidence.tales.length>=7);
+  for(const item of [...weepingEvidence.bosses,...weepingEvidence.tales]){
+    assert.ok(regionCollectibles("weeping-creek").some(c=>c.sourceNumber===item.number),item.title);
+  }
+});
