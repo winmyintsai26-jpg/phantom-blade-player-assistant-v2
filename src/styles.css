@@ -35,3 +35,29 @@
 .item-picture-credit:hover{color:#f4d9a5}
 .collectible-copy{min-width:0}
 @media(max-width:700px){.collectible-row{grid-template-columns:28px 58px minmax(0,1fr);column-gap:10px;row-gap:10px}.collectible-image-wrap{width:58px;height:58px}.collectible-row>label{grid-column:3;justify-self:start}.item-image-placeholder,.item-image-fallback{font-size:23px}}
+
+/* Player continuity controls, spoiler gates, and anchored recommendations. */
+.next-action{display:flex;align-items:center;justify-content:space-between;gap:22px;margin:24px 0 45px;padding:25px;border:1px solid rgba(211,172,114,.35);background:linear-gradient(110deg,rgba(185,137,72,.13),rgba(20,26,33,.15));border-radius:10px}
+.next-action h2{margin:7px 0 8px;font-size:clamp(20px,3vw,28px)}
+.next-action p{max-width:670px;line-height:1.6;font-size:14px}
+.next-action .primary{flex-shrink:0;text-decoration:none}
+.progress-page{max-width:960px;margin:40px auto 85px}
+.progress-page h1{font-size:clamp(34px,5vw,57px);margin:10px 0}
+.data-panel{margin:22px 0;padding:24px;border:1px solid rgba(211,172,114,.22);border-radius:10px;background:rgba(255,255,255,.025)}
+.data-panel h2{font-size:23px;margin:8px 0 11px}
+.data-panel p{color:#bdc5cb;line-height:1.65}
+.data-panel h2:not(:first-child){margin-top:30px}
+.data-panel input[type=file]{display:block;width:100%;max-width:500px;padding:12px;background:rgba(255,255,255,.035);color:inherit;border:1px solid rgba(211,172,114,.35);border-radius:5px}
+.spoiler-switch{display:flex;align-items:center;gap:12px;cursor:pointer;line-height:1.5}
+.spoiler-switch input{width:20px;height:20px;accent-color:#d6ac72}
+.saved-regions{list-style:none;margin:0;padding:0}
+.saved-regions li{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.saved-regions span{font-size:12px;color:#c4cad0}
+.saved-regions a{color:#e7c088}
+.spoiler-gate{padding:12px 14px;margin:10px 0;border:1px solid rgba(208,165,105,.45);border-radius:6px;background:rgba(146,93,35,.085)}
+.spoiler-gate summary{cursor:pointer;color:#e4be82;font-weight:700}
+.spoiler-gate:focus-within{outline:1px solid rgba(230,183,120,.5)}
+.spoiler-body{margin:14px 0 3px}
+[id^="item-"],[id^="checkpoint-"]{scroll-margin-top:30px}
+[id^="item-"]:target,[id^="checkpoint-"]:target{outline:2px solid rgba(231,177,106,.7);outline-offset:4px}
+@media(max-width:700px){.next-action{flex-direction:column;align-items:stretch;padding:19px}.data-panel{padding:17px}.saved-regions li{flex-direction:column;gap:4px}}
