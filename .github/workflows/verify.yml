@@ -6,6 +6,7 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -15,7 +16,8 @@ jobs:
       - run: npm run check
       - run: npm run test:build
       - run: npx playwright install --with-deps chromium
-      - run: npm run test:browser
+      - name: Browser tests (bounded)
+        run: timeout --signal=SIGTERM 180s npm run test:browser
       - name: Attempt live Cloudflare smoke check (non-blocking)
         run: node scripts/live-smoke.mjs
         continue-on-error: true
