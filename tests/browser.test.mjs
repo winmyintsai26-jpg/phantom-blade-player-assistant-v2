@@ -19,7 +19,7 @@ try{
   await waitForServer();
   const browser=await chromium.launch({headless:true});
   try{
-    test("all nine region routes and home page render",async()=>{
+    await test("all nine region routes and home page render",async()=>{
       const page=await browser.newPage();
       const errors=[];page.on("pageerror",e=>errors.push(e.message));
       await page.goto(origin+"/");
@@ -33,7 +33,7 @@ try{
       assert.deepEqual(errors,[]);
       await page.close();
     });
-    test("search, phase filters and progress survive reload",async()=>{
+    await test("search, phase filters and progress survive reload",async()=>{
       const page=await browser.newPage();
       await page.goto(origin+"/regions/weeping-creek/");
       assert.equal(await page.locator(".collectible-row").count(),61);
@@ -57,7 +57,7 @@ try{
       assert.equal(await page.locator('[data-item-id="weeping-creek:1"]').isChecked(),false);
       await page.close();
     });
-    test("correction report produces a prefilled GitHub link",async()=>{
+    await test("correction report produces a prefilled GitHub link",async()=>{
       const page=await browser.newPage();
       await page.goto(origin+"/regions/village-of-lu/");
       await page.locator("#feedback-item").fill("#70");
@@ -65,11 +65,11 @@ try{
       const popupPromise=page.waitForEvent("popup");
       await page.locator("#report-issue").click();
       const popup=await popupPromise;
-      assert.match(popup.url(),/github.com\/winmyintsai26-jpg\/phantom-blade-player-assistant-v2\/issues\/new/);
+      await popup.waitForURL(/github.com/,{timeout:5000}).catch(()=>{});assert.match(popup.url(),/github.com\/winmyintsai26-jpg\/phantom-blade-player-assistant-v2\/issues\/new/);
       assert.match(decodeURIComponent(popup.url()),/Village of Lu/);
       await popup.close();await page.close();
     });
-    test("mobile layout has no horizontal overflow on home and region",async()=>{
+    await test("mobile layout has no horizontal overflow on home and region",async()=>{
       const page=await browser.newPage({viewport:{width:375,height:812},isMobile:true,hasTouch:true});
       for(const path of ["/","/regions/weeping-creek/","/regions/village-of-lu/"]){
         await page.goto(origin+path);
