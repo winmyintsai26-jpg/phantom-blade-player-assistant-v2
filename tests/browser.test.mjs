@@ -28,11 +28,14 @@ try{
       for(const route of ["weeping-creek","crimson-forest","village-of-lu","pangzhen","mandate-encampment","meigu-lake","mountain-of-imprisonment","mirage-estate","mount-soulrend"]){
         await page.goto(origin+"/regions/"+route+"/");
         assert.equal(await page.locator(".region-page h1").count(),1,route);
+        assert.equal(await page.locator(".region-cover img").count(),1,route);
+        assert.ok(await page.locator(".region-cover").evaluate(el=>el.compareDocumentPosition(document.querySelector(".region-page .pills")) & Node.DOCUMENT_POSITION_FOLLOWING),route+" cover not before route stats");
         assert.ok(await page.locator(".collectible-row").count()>0,route);
       }
       assert.deepEqual(errors,[]);
       await page.close();
     });
+    await test("all nine regions use distinct hero pictures",async()=>{const page=await browser.newPage();const images=[];for(const slug of ["weeping-creek","crimson-forest","village-of-lu","pangzhen","mandate-encampment","meigu-lake","mountain-of-imprisonment","mirage-estate","mount-soulrend"]){await page.goto(origin+"/regions/"+slug+"/");images.push(await page.locator(".region-cover img").getAttribute("src"));}assert.equal(new Set(images).size,9);await page.close();});
     await test("search, phase filters and progress survive reload",async()=>{
       const page=await browser.newPage();
       await page.goto(origin+"/regions/weeping-creek/");
