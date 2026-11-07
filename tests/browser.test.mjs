@@ -104,9 +104,10 @@ try{
       const popupPromise=page.waitForEvent("popup");
       await page.locator("#send-feedback").click();
       const popup=await popupPromise;
-      assert.match(decodeURIComponent(popup.url()),/Selected troubleshooting problem: I can get him off his horse/);
-      assert.match(decodeURIComponent(popup.url()),/PS5, version 1.0.1/);
-      assert.match(decodeURIComponent(popup.url()),/My situation is different/);
+      const prepared=decodeURIComponent(decodeURIComponent(popup.url())); // GitHub may redirect through login and double-encode the draft
+      assert.match(prepared,/Selected troubleshooting problem: I can get him off his horse/);
+      assert.match(prepared,/PS5, version 1.0.1/);
+      assert.match(prepared,/My situation is different/);
       await popup.close();await page.close();
     });
     await test("Player Help pages have no mobile horizontal overflow",async()=>{
@@ -135,7 +136,8 @@ try{
       await page.reload();
       assert.equal(await page.locator('[data-item-id="weeping-creek:1"]').isChecked(),true);
       await openPage(page,origin+"/regions/crimson-forest/");
-      assert.equal(await page.locator('[data-item-id="crimson-forest:1"]').count(),0);
+      assert.equal(await page.locator('[data-item-id="weeping-creek:1"]').count(),0,"weeping item must not leak into Crimson Forest");
+      assert.equal(await page.locator('[data-item-id="crimson-forest:1"]').count(),1,"Crimson Forest should retain its own numbered first entry");
       await openPage(page,origin+"/regions/weeping-creek/");
       await page.locator('[data-item-id="weeping-creek:1"]').uncheck();
       await page.reload();
@@ -157,7 +159,8 @@ try{
       assert.ok(await page.locator(".collectible-row").count()>0);
       await page.locator('[data-route-mode="remaining"]').click();
       assert.equal(await page.locator(".collectible-row").count(),61);
-      await page.locator('[data-item-id="weeping-creek:1"]').check();
+      // The Not found view removes checked rows synchronously, so click instead of check() (which expects the element to remain).
+      await page.locator('[data-item-id="weeping-creek:1"]').evaluate(input=>input.click());
       assert.equal(await page.locator('[data-item-id="weeping-creek:1"]').count(),0);
       await page.locator("#clear-item-filters").click();
       assert.equal(await page.locator(".collectible-row").count(),61);
@@ -175,8 +178,9 @@ try{
       const popupPromise=page.waitForEvent("popup");
       await page.locator("#report-issue").click();
       const popup=await popupPromise;
-      await popup.waitForURL(/github.com/,{timeout:5000}).catch(()=>{});assert.match(popup.url(),/github.com\/winmyintsai26-jpg\/phantom-blade-player-assistant-v2\/issues\/new/);
-      assert.match(decodeURIComponent(popup.url()),/Village of Lu/);
+      await popup.waitForURL(/github.com/,{timeout:5000}).catch(()=>{});const draftUrl=decodeURIComponent(decodeURIComponent(popup.url()));
+      assert.match(draftUrl,/github.com\/winmyintsai26-jpg\/phantom-blade-player-assistant-v2\/issues\/new/);
+      assert.match(draftUrl,/Village of Lu/);
       await popup.close();await page.close();
     });
     await test("mobile layout has no horizontal overflow on home and region",async()=>{
