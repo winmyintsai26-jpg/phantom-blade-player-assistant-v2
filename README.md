@@ -8,7 +8,7 @@ An independent, player-first guide workspace designed around actionable steps, o
 2. Set **Build command** to `npm run build`.
 3. Set **Deploy command** to `npx wrangler deploy`.
 4. Leave **Root directory** as `/`.
-5. This project deploys from `dist/` via the `assets` setting in `wrangler.jsonc`. The Worker name is `phantom-blade-assistant-v2-preview`.
+5. This project deploys from `dist/` via the `assets` setting in `wrangler.jsonc`. The Worker name is `phantom-blade-player-assistant-v2`.
 6. Keep the new `workers.dev` preview URL separate from the existing Netlify and Cloudflare sites.
 
 Run locally:
@@ -21,8 +21,8 @@ npm run dev
 
 ## Content and media integrity
 
-- **Only Healer's Legacy is source-researched**; it is not independently tested in-game.
-- Other workspaces are intentionally labeled as research/planning tools, not completed walkthroughs.
+- **Healer's Legacy and selected regional preflight checkpoints are source-researched**; it is not independently tested in-game.
+- Nine region indexes are available; item-by-item walkthroughs are not yet imported. Other workspaces are intentionally labeled as research/planning tools, not completed walkthroughs.
 - All artwork in the app is original abstract CSS illustration, not game screenshots. There are **no externally hotlinked game images**. Add screenshots only after rights and in-game location are verified.
 - Checkboxes represent progress on this device, not the actual game state.
 - Preview is deliberately `noindex,nofollow` and is not ready for public search indexing.
