@@ -72,3 +72,16 @@
 .confidence-label{font-size:10px!important;letter-spacing:.075em;color:#d5ad76!important;border:1px solid rgba(210,166,109,.35);border-radius:4px;padding:4px 6px}
 .collectible-tags .confidence-label{white-space:normal}
 @media(max-width:740px){.route-summary-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* Source-backed boss-preflight and multi-stage quest cards. */
+.weeping-preflight{margin:35px 0}
+.weeping-preflight .section-index{margin-bottom:17px}
+.preflight-items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.preflight-item{padding:20px;border:1px solid rgba(223,176,99,.38);border-left:3px solid #c69b62;background:linear-gradient(145deg,rgba(145,92,39,.13),rgba(23,28,34,.32));border-radius:8px}
+.preflight-item h3{font-size:19px;margin:12px 0 9px}
+.preflight-item p{line-height:1.65;font-size:14px}
+.preflight-links{display:flex;flex-wrap:wrap;gap:11px;margin-top:15px}
+.preflight-links a{font-size:12px;color:#ecc390;text-underline-offset:4px}
+.tale-steps{padding-left:23px;margin:13px 0 16px}
+.tale-steps li{margin:8px 0;line-height:1.55;font-size:13px}
+@media(max-width:740px){.preflight-items{grid-template-columns:1fr}.preflight-item{padding:16px}}
