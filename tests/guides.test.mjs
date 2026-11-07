@@ -43,7 +43,7 @@ test("Weeping Creek preflight links resolve to real numbered routes and checkpoi
   }
 });
 test("Weeping Creek multi-stage tales have chronological actionable instructions",()=>{
-  for(const key of ["four-fierce-axes","festering-secret","apprentice-healer","severed-mindseal"]){
+  for(const key of ["triple-threat","flesh-lily","four-fierce-axes","purge-the-sect","festering-secret","apprentice-healer","severed-mindseal"]){
     const steps=weepingRouteSteps[key];
     assert.ok(steps.length>=3,key);
     assert.ok(steps.every(x=>x.length>35),key);
