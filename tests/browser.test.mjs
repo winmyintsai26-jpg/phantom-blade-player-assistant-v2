@@ -57,6 +57,34 @@ try{
       }
       await page.close();
     });
+    await test("Player Help Center filters, diagnosis and feedback work",async()=>{
+      const page=await browser.newPage();
+      const errors=[];page.on("pageerror",e=>errors.push(e.message));
+      await page.goto(origin+"/help/");
+      assert.equal(await page.locator(".help-card").count(),7);
+      await page.locator("#problem-search").fill("Jing Ye");
+      assert.equal(await page.locator(".help-card").count(),1);
+      await page.locator("#problem-search").fill("");
+      await page.locator("#problem-category").selectOption("Quests & Bugs");
+      assert.equal(await page.locator(".help-card").count(),1);
+      await page.goto(origin+"/help/jing-ye-dismounted/");
+      assert.equal(await page.locator(".help-steps li").count(),5);
+      await page.locator('[data-diagnosis="1"]').click();
+      assert.match(await page.locator("#diagnosis-result").innerText(),/shield/i);
+      await page.locator('[data-feedback="not-solved"]').click();
+      assert.equal(await page.locator("#send-feedback").isDisabled(),false);
+      assert.deepEqual(errors,[]);
+      await page.close();
+    });
+    await test("Player Help pages have no mobile horizontal overflow",async()=>{
+      const page=await browser.newPage({viewport:{width:375,height:812},isMobile:true,hasTouch:true});
+      for(const url of ["/help/","/help/sha-chi-tower-base/","/help/red-seven-sword/"]){
+        await page.goto(origin+url);
+        const sizes=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth}));
+        assert.ok(sizes.scroll<=sizes.client+2,url+" overflow "+JSON.stringify(sizes));
+      }
+      await page.close();
+    });
     await test("search, phase filters and progress survive reload",async()=>{
       const page=await browser.newPage();
       await page.goto(origin+"/regions/weeping-creek/");
