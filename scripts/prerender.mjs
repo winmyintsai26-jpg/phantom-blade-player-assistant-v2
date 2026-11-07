@@ -46,5 +46,5 @@ const sitemap='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www
 await writeFile(path.join(output,"sitemap.xml"),sitemap,"utf8");
 const robots=publish?["User-agent: *","Allow: /","Sitemap: "+origin+"/sitemap.xml",""]:["User-agent: *","Disallow: /","Sitemap: "+origin+"/sitemap.xml",""];
 await writeFile(path.join(output,"robots.txt"),robots.join("\n"),"utf8");
-await writeFile(path.join(output,"build-manifest.json"),JSON.stringify({origin,indexingEnabled:publish,editorialApproved:approved,routes:[...unique]},null,2)+"\n","utf8");
+await writeFile(path.join(output,"build-manifest.json"),JSON.stringify({origin,commitSha:process.env.V2_BUILD_SHA||process.env.GITHUB_SHA||null,indexingEnabled:publish,editorialApproved:approved,routes:[...unique]},null,2)+"\n","utf8");
 console.log("Pre-rendered "+pages.length+" routes. Indexing: "+(publish?"ON (editorial approval)":"OFF (preview)")+".");
