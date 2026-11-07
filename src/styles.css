@@ -145,3 +145,9 @@
 .regional-tale-list small{font-size:12px;color:#b8c0c7;line-height:1.5}
 .region-page #regional-tales,.region-page #research-reference{scroll-margin-top:28px}
 @media(max-width:650px){.regional-tale-list{grid-template-columns:minmax(0,1fr)}}
+
+/* Region-by-region video directory distinguishes reviewed references from searches. */
+.video-reference-kind{display:inline-flex;align-self:flex-start;max-width:max-content;padding:4px 8px;border-radius:4px;border:1px solid rgba(208,174,125,.35);font-size:10px!important;letter-spacing:.05em;text-transform:uppercase;color:#e3c49a!important;background:rgba(188,138,78,.08)}
+.video-research-list a{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+.video-research-list a strong{font-size:16px;line-height:1.35}
+.video-research{scroll-margin-top:25px}
