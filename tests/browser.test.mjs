@@ -46,6 +46,17 @@ try{
       await page.close();
     });
     await test("all nine regions use distinct hero pictures",async()=>{const page=await browser.newPage();const images=[];for(const slug of ["weeping-creek","crimson-forest","village-of-lu","pangzhen","mandate-encampment","meigu-lake","mountain-of-imprisonment","mirage-estate","mount-soulrend"]){await page.goto(origin+"/regions/"+slug+"/");images.push(await page.locator(".region-cover img").getAttribute("src"));}assert.equal(new Set(images).size,9);await page.close();});
+    await test("all four homepage workspaces render complete steps with region links",async()=>{
+      const page=await browser.newPage();
+      for(const [slug,minimum] of [["healers-legacy",9],["ending-checkpoints",7],["missable-preflight",8],["combat-diagnostics",8]]){
+        await page.goto(origin+"/guides/"+slug+"/");
+        assert.equal(await page.locator(".guide h1").count(),1,slug);
+        assert.equal(await page.locator(".guide .step").count(),minimum,slug);
+        assert.equal(await page.locator(".guide-stage").count(),minimum,slug);
+        assert.ok(await page.locator("#sources a").count()>=2,slug);
+      }
+      await page.close();
+    });
     await test("search, phase filters and progress survive reload",async()=>{
       const page=await browser.newPage();
       await page.goto(origin+"/regions/weeping-creek/");
