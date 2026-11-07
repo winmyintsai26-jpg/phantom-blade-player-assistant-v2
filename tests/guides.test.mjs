@@ -17,3 +17,6 @@ test("region collectible filtering is correctly scoped",()=>{assert.equal(region
 test("Village of Lu has actionable route data and missable checkpoints",()=>{const entries=regionCollectibles("village-of-lu");assert.ok(entries.length>=35);assert.ok(entries.some(c=>c.sourceNumber===70&&c.phase==="Missable"));assert.ok(findRegion("village-of-lu").checkpoints.length>=5);});
 
 test("all nine regions have sourced collectible directions",()=>{for(const region of regions){const entries=regionCollectibles(region.id);assert.ok(entries.length>0,region.id);assert.ok(region.collectibles>0,region.id);assert.ok(region.checkpoints.length>0,region.id);}});
+
+test("Weeping Creek numbered collectible route is complete and unique",()=>{const entries=regionCollectibles("weeping-creek");assert.equal(entries.length,61);assert.deepEqual(entries.map(x=>x.sourceNumber).sort((a,b)=>a-b),Array.from({length:61},(_,i)=>i+1));});
+test("all source-backed entries have useful labels and directions",()=>{for(const c of collectibles){assert.ok(c.name&&c.type&&c.area&&c.direction.length>=25,c.id);assert.ok(["First visit","Story","Missable","Return visit","Prerequisite"].includes(c.phase),c.id);}});
