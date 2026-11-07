@@ -61,3 +61,14 @@
 [id^="item-"],[id^="checkpoint-"]{scroll-margin-top:30px}
 [id^="item-"]:target,[id^="checkpoint-"]:target{outline:2px solid rgba(231,177,106,.7);outline-offset:4px}
 @media(max-width:700px){.next-action{flex-direction:column;align-items:stretch;padding:19px}.data-panel{padding:17px}.saved-regions li{flex-direction:column;gap:4px}}
+
+/* Research/implementation tracks: player-facing, source-confidence labelled records. */
+.weeping-research{margin:40px 0}.route-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.route-summary-grid>section>h3{font-size:21px;line-height:1.25;margin:14px 0 20px}
+.route-summary{padding:19px;margin-bottom:14px;border:1px solid rgba(213,172,116,.24);border-radius:8px;background:rgba(255,255,255,.02)}
+.route-summary h4{font-size:17px;margin:10px 0 8px;color:#f2dfbe}
+.route-summary p{line-height:1.55;margin:7px 0;font-size:13px}
+.route-summary a{font-size:12px;color:#e9b979;display:inline-block;margin-top:7px}
+.confidence-label{font-size:10px!important;letter-spacing:.075em;color:#d5ad76!important;border:1px solid rgba(210,166,109,.35);border-radius:4px;padding:4px 6px}
+.collectible-tags .confidence-label{white-space:normal}
+@media(max-width:740px){.route-summary-grid{grid-template-columns:minmax(0,1fr)}}
