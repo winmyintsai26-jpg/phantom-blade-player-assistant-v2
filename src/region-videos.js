@@ -3,6 +3,8 @@
 export const regionVideoLibrary={
 "weeping-creek":[
 {title:"100% walkthrough — first Bell (21:30)",creator:"Just Human",url:"https://www.youtube.com/watch?v=1fpHDWIOhos&t=1290s",kind:"Video reference",note:"Long-form Weeping Creek walkthrough with chaptered route context."},
+{title:"Boulderguard item footage (2:19)",creator:"IGN",url:"https://www.youtube.com/watch?v=H2aOYCISwlQ&t=139s",kind:"Video reference",note:"Item video index; does not independently establish a missable cutoff."},
+{title:"Broken-String Bow (4:52)",creator:"IGN",url:"https://www.youtube.com/watch?v=H2aOYCISwlQ&t=292s",kind:"Video reference",note:"Bow pickup reference; verify quest hand-in deadline separately."},
 {title:"Boss montage — Weeping Creek (0:57)",creator:"vAnother Level",url:"https://www.youtube.com/watch?v=0PxHKLVVomI&t=57s",kind:"Video reference",note:"Begins with Weeping Creek boss chapters; this is a quick overview, not a strategy guide."},
 {title:"Missable quest checklist — Outpost (3:20)",creator:"LaserBolt",url:"https://www.youtube.com/watch?v=ZFOkOCvzgpQ&t=200s",kind:"Video reference",note:"Quest and Boulderguard context; verify deadlines against in-game events."}
 ],
