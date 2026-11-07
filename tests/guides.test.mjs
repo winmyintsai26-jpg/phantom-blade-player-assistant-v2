@@ -23,3 +23,7 @@ test("all source-backed entries have useful labels and directions",()=>{for(cons
 
 test("every selected route is ordered and bounded by its source numbering",()=>{for(const r of regions){const entries=regionCollectibles(r.id);assert.deepEqual(entries.map(x=>x.sourceNumber),entries.map(x=>x.sourceNumber).sort((a,b)=>a-b),r.id);assert.equal(new Set(entries.map(x=>x.sourceNumber)).size,entries.length,r.id);}});
 test("first three regions have explicit missable checkpoints",()=>{for(const id of ["weeping-creek","crimson-forest","village-of-lu"]){const r=findRegion(id);assert.ok(r.checkpoints.some(x=>x.risk==="Missable"),id);assert.ok(regionCollectibles(id).some(x=>x.phase==="Missable"),id);}});
+
+import {collectibleArt} from "../src/item-art.js";
+test("item art only appears on exact source-backed entries",()=>{for(const c of collectibles){const art=collectibleArt(c.id);if(!art)continue;assert.equal(new URL(art.src).protocol,"https:");assert.equal(new URL(art.source).hostname,"pbz.gg");assert.match(art.src,/\/media\/game\//);assert.match(art.source,/^https:\/\/pbz\.gg\//);}});
+test("Boulderguard and key early equipment have item pictures",()=>{for(const id of ["weeping-creek:4","weeping-creek:6","weeping-creek:8","weeping-creek:27","weeping-creek:48"])assert.ok(collectibleArt(id),id);assert.equal(collectibleArt("weeping-creek:1"),null);});
