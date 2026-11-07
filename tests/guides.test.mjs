@@ -57,3 +57,36 @@ test("Weeping Creek boss/tale evidence never claims independent game verificatio
     assert.ok(regionCollectibles("weeping-creek").some(c=>c.sourceNumber===item.number),item.title);
   }
 });
+
+test("four homepage workspaces are substantial and have staged tasks",()=>{
+ const minimum={"healers-legacy":9,"ending-checkpoints":7,"missable-preflight":8,"combat-diagnostics":8};
+ for(const [id,count] of Object.entries(minimum)){
+   const guide=getGuide(id);
+   assert.ok(guide,id);
+   assert.equal(guide.steps.length,count,id);
+   assert.ok(guide.requirements.length>=4,id);
+   assert.ok(guide.troubleshooting.length>=4,id);
+   assert.ok(guide.sources.length>=2,id);
+   assert.ok(guide.steps.every(step=>step.stage&&step.check.length>30),id);
+   assert.match(guide.status,/not game-tested|not exhaustive|not boss-tested/i,id);
+ }
+});
+test("ending guide lists prerequisites and final point of no return",()=>{
+ const g=getGuide("ending-checkpoints"),body=g.steps.map(x=>x.body).join(" ");
+ for(const name of ["Deep in the Valley","Illusion of Inanis","Secrets at the Heart of the Lake","Bloodline Awakening","Last Chance","Mirage Estate"])assert.ok(body.includes(name),name);
+});
+test("combat guide distinguishes blue parry from red dodge",()=>{
+ const body=getGuide("combat-diagnostics").steps.map(x=>x.body).join(" ");
+ assert.match(body,/blue-flash.*parry|parr.*blue-flash/i);
+ assert.match(body,/red-flash.*dodge|dodge.*red-flash/i);
+ assert.match(body,/Sha-Chi/);
+});
+test("workspace deep links lead to existing guide or region",()=>{
+ for(const g of guides)for(const step of g.steps){
+   if(!step.link)continue;
+   const path=new URL(step.link,"https://example.org").pathname;
+   const m=path.match(/^\/regions\/([a-z0-9-]+)\/$/);
+   if(m)assert.ok(findRegion(m[1]),step.link);
+   else assert.ok(path.startsWith("/guides/")&&getGuide(path.split("/")[2]),step.link);
+ }
+});
