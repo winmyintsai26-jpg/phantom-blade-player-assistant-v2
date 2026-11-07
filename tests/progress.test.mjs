@@ -31,7 +31,7 @@ test("next action points to earliest unmet critical checkpoint, then an item",()
  const first=nextAction(()=>[]);
  assert.equal(first.region.id,"weeping-creek");
  assert.match(first.href,/^\/regions\/weeping-creek\/#checkpoint-/);
- const next=nextAction(id=>id==="region-weeping-creek"?[0,1,2,3]:[]);
+ const next=nextAction(id=>id==="region-weeping-creek"?regions[0].checkpoints.map((_,i)=>i):[]);
  assert.equal(next.region.id,"weeping-creek");
  assert.ok(next.href.includes("#item-"));
 });
