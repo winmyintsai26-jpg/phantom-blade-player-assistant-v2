@@ -4,3 +4,8 @@ test("search and category filters",()=>{assert.equal(searchGuides("healer")[0].i
 test("progress and route helpers",()=>{assert.equal(progressPercent(1,3),33);assert.equal(progressPercent(0,0),0);assert.equal(getGuide("unknown"),undefined)});
 test("missable quest warns before both named bosses",()=>{const g=getGuide("healers-legacy");const all=[...g.requirements,...g.steps.map(s=>s.body)].join(" ");assert.match(all,/Jing Ye/);assert.match(all,/Bai Chilian/);assert.match(all,/Pangzhen/);assert.ok(g.sources.length>=3)});
 test("uncertain routes never masquerade as tested",()=>{for(const g of guides)assert.ok(!/game-tested|verified in-game/i.test(g.status)||/not game-tested|unverified/i.test(g.status))});
+
+import {regions,findRegion,allCheckpoints} from "../src/regions.js";
+test("atlas has nine unique story-ordered regions",()=>{assert.equal(regions.length,9);assert.equal(new Set(regions.map(r=>r.id)).size,9);assert.deepEqual(regions.map(r=>r.order),[1,2,3,4,5,6,7,8,9]);});
+test("every region has a source and uncertain counts stay null",()=>{for(const r of regions){assert.ok(r.name&&r.description);assert.equal(new URL(r.source).protocol,"https:");assert.ok(r.collectibles===null||Number.isInteger(r.collectibles));}assert.equal(findRegion("weeping-creek").collectibles,61);assert.equal(findRegion("crimson-forest").collectibles,85);});
+test("regional checkpoint IDs are unique and actionable",()=>{const points=allCheckpoints;assert.ok(points.length>=10);assert.equal(new Set(points.map(c=>c.id)).size,points.length);for(const c of points)assert.ok(c.title&&c.detail.length>35&&c.risk);});
