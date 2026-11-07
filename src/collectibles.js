@@ -71,7 +71,6 @@ export const collectibles=[
 ["village-of-lu",74,"Reinforced Bowstring","Tempering Material","Black Serpent House","Return with Flaming Mane to burn the branches on the hill and enter the building.","Return visit"],
 ["village-of-lu",75,"Border Banner","Tempering Material","Young Master Lan's Hideout","Return with Bashpole; break the cracked ground beside the hideout.","Return visit"],
 ["village-of-lu",76,"Border Poems","Tempering Material","Hidden Passage to Pangzhen","Return with Tiger Cannon; drop to the right of the bell and destroy the wall.","Return visit"],
-,
 ["pangzhen",1,"Hidden Storehouse","Bell","Hidden Storehouse","This bell activates during the story transition into Pangzhen.","Story"],
 ["pangzhen",2,"Abandoned Wine Cellar","Bell","Abandoned Wine Cellar","Leave the Hidden Storehouse building and continue to the bell outside.","First visit"],
 ["pangzhen",6,"Flameward","Accessory","South Gate Bridge","From South Gate Bridge Bell, climb to the small balcony overlooking the open area.","First visit"],
