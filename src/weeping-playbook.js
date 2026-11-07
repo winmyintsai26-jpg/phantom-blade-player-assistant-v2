@@ -6,6 +6,22 @@ export const weepingPreflight=[
 {title:"Before the Crimson Forest regional boss",detail:"Secure the evidence needed for Four Fierce Axes from Festering Secret, since later access may close. Finish Purge the Sect and Festering Secret.",route:19,checkpoint:6,source:"https://www.powerpyx.com/phantom-blade-zero-all-side-quests-guide/",confidence:"Source-documented"}
 ];
 export const weepingRouteSteps={
+"triple-threat":[
+"Enter the statue beside The Lady's Rift Bell to begin Triple Threat.",
+"Return after getting stronger (the source recommends around the end of the first Pangzhen visit) and defeat the Aberrant Three-Faced Puppet.",
+"The tale continues in Crimson Forest on a later visit after the frozen Mirrorwood section becomes accessible; confirm your equipment before the rematch."
+],
+"flesh-lily":[
+"Meet Yu'er near the opening waterfall to begin the tale.",
+"From Valley Sha-Chi Tower 1st Floor, take the route behind the tower to Hua, Deadly Betrothed, and defeat her.",
+"Collect Twin Flesh Lilies near the arena altar and return them to Yu'er at Outpost before Bai Chilian in Crimson Forest.",
+"Later in Pangzhen, continue the quest involving Yu'er's father after the related story encounters."
+],
+"purge-the-sect":[
+"Talk to the Brooding Old Archer on the Outpost roof before the end of Crimson Forest.",
+"Clear the enemies at Ruthless Archer Camp and collect the Broken-String Bow.",
+"Return to the Brooding Old Archer for the Feather Bow Phantom Edge before the Crimson Forest regional boss."
+],
 "four-fierce-axes":[
 "Collect the first case file beside the Broken Puppet Valley Bell and the second in the nearby house.",
 "Collect the Outpost Courtyard file, then the file on a table near the Axemaster’s Holding Cell Bell.",
