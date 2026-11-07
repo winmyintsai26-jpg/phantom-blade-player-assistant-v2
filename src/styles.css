@@ -85,3 +85,35 @@
 .tale-steps{padding-left:23px;margin:13px 0 16px}
 .tale-steps li{margin:8px 0;line-height:1.55;font-size:13px}
 @media(max-width:740px){.preflight-items{grid-template-columns:1fr}.preflight-item{padding:16px}}
+
+/* Weeping Creek: player-first guide navigation and compact expandable reference sections. */
+.region-hub{margin:22px 0 28px;padding:22px;border:1px solid rgba(205,166,104,.37);border-radius:10px;background:linear-gradient(130deg,rgba(181,122,57,.11),rgba(21,29,37,.45))}
+.region-hub-top{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.region-hub-top h2{font-size:clamp(22px,3vw,30px);margin:7px 0}
+.region-hub-top p{font-size:13px;color:#c8c3b9;line-height:1.6;margin:0}
+.region-hub-backup{flex-shrink:0;font-size:12px;color:#e7c18b;text-decoration:underline;text-underline-offset:3px}
+.region-hub-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:22px;padding:16px 0;border-top:1px solid rgba(214,172,101,.22);border-bottom:1px solid rgba(214,172,101,.22)}
+.region-hub-stats>div{display:flex;flex-direction:column;gap:5px;padding:0 13px;border-right:1px solid rgba(214,172,101,.2)}
+.region-hub-stats>div:first-child{padding-left:0}
+.region-hub-stats>div:last-child{border-right:none}
+.region-hub-stats strong{color:#f3d2a2;font-size:clamp(19px,2.5vw,28px);font-weight:800}
+.region-hub-stats span{font-size:11px;letter-spacing:.05em;color:#b8c1c7}
+.region-jump{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin-top:17px}
+.region-jump a{display:flex;flex-direction:column;gap:7px;padding:12px 10px;border-radius:6px;border:1px solid rgba(206,167,109,.28);background:rgba(255,255,255,.025);color:#ebe0d0;text-decoration:none;font-size:12px;line-height:1.35}
+.region-jump a:hover,.region-jump a:focus-visible{border-color:#e3ba7b;background:rgba(206,167,109,.13)}
+.region-jump b{color:#d6ae75;font-size:11px}
+.route-mode{display:flex;gap:5px;flex-wrap:wrap;flex-basis:100%;padding:4px;background:rgba(255,255,255,.03);border:1px solid rgba(206,167,109,.18);border-radius:8px}
+.route-mode button{padding:9px 12px;color:#d2d5d8;background:transparent;border:1px solid transparent;border-radius:5px;cursor:pointer;font:inherit;font-size:12px}
+.route-mode button[aria-pressed="true"]{color:#151a1d;background:#e0b77f;font-weight:800}
+.route-mode button:focus-visible{outline:2px solid #f4d8b1;outline-offset:2px}
+.guide-collection{min-width:0;border:1px solid rgba(213,174,116,.29);border-radius:9px;background:rgba(255,255,255,.02);overflow:hidden}
+.guide-collection>summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:center;justify-content:space-between;padding:19px 18px;font-weight:800;font-size:18px;color:#ecd5b4}
+.guide-collection>summary::-webkit-details-marker{display:none}
+.guide-collection>summary:before{content:"+";font-size:21px;color:#d1a16b}
+.guide-collection[open]>summary:before{content:"−"}
+.guide-collection>summary span{margin-left:auto;font-weight:500;font-size:12px;color:#c4cad0}
+.guide-collection-body{padding:4px 18px 19px}
+.guide-collection-body .route-summary{margin-top:12px}
+.region-hub [id],.region-page #before-bosses,.region-page #critical-checkpoints,.region-page #collectible-route,.region-page #weeping-routes{scroll-margin-top:24px}
+@media(max-width:850px){.region-jump{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:650px){.region-hub{padding:16px}.region-hub-top{flex-direction:column;align-items:flex-start}.region-hub-stats{gap:3px}.region-hub-stats>div{padding:0 8px}.region-hub-stats strong{font-size:19px}.region-hub-stats span{font-size:10px}.region-jump{grid-template-columns:repeat(2,minmax(0,1fr))}.guide-collection>summary{font-size:16px;padding:15px}.guide-collection-body{padding:4px 12px 15px}.route-mode button{flex:1 1 auto}}
