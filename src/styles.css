@@ -117,3 +117,8 @@
 .region-hub [id],.region-page #before-bosses,.region-page #critical-checkpoints,.region-page #collectible-route,.region-page #weeping-routes{scroll-margin-top:24px}
 @media(max-width:850px){.region-jump{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:650px){.region-hub{padding:16px}.region-hub-top{flex-direction:column;align-items:flex-start}.region-hub-stats{gap:3px}.region-hub-stats>div{padding:0 8px}.region-hub-stats strong{font-size:19px}.region-hub-stats span{font-size:10px}.region-jump{grid-template-columns:repeat(2,minmax(0,1fr))}.guide-collection>summary{font-size:16px;padding:15px}.guide-collection-body{padding:4px 12px 15px}.route-mode button{flex:1 1 auto}}
+
+.route-stage{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:16px 15px 12px;margin:24px 0 10px;border-bottom:1px solid rgba(210,167,104,.5)}
+.route-stage span{font-size:12px;font-weight:800;color:#edc28a;letter-spacing:.13em}
+.route-stage small{font-size:11px;color:#bfc5c9;line-height:1.5}
+@media(max-width:650px){.route-stage{flex-direction:column;gap:5px;padding:13px 10px 10px}}
