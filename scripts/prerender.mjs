@@ -69,7 +69,7 @@ for(const page of pages){
  const meta=htmlEscape(page.description.slice(0,160));
  const canonical=origin+page.route;
  let html=template
- .replace(/<title>[^<]*<\/title>/,'<title>'+htmlEscape(page.title)+' | Phantom Blade Zero V2</title>')
+ .replace(/<title>[^<]*<\/title>/,'<title>'+htmlEscape(page.route==="/"?page.title:page.title+" | Phantom Blade Zero V2")+'</title>')
  .replace(/<meta name="description" content="[^"]*">/,'<meta name="description" content="'+meta+'">')
  .replace(/<meta name="robots" content="[^"]*">/,'<meta name="robots" content="'+(publish?"index,follow":"noindex,nofollow")+'">')
  .replace('</head>','<link rel="canonical" href="'+htmlEscape(canonical)+'">'+structuredData(page)+
