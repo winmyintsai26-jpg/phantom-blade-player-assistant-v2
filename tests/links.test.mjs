@@ -4,9 +4,10 @@ import {guides} from "../src/guides.js";
 import {problems} from "../src/help-problems.js";
 import {regions} from "../src/regions.js";
 import {objectiveRecords} from "../src/objectives.js";
+import {bosses} from "../src/bosses.js";
 import {sitePages} from "../src/site-pages.js";
 
-const valid=new Set(["/","/solver/","/help/","/objectives/","/progress/",
+const valid=new Set(["/","/solver/","/bosses/",...bosses.map(b=>"/bosses/"+b.slug+"/"),"/help/","/objectives/","/progress/",
  ...Object.keys(sitePages).map(id=>"/"+id+"/"),
  ...guides.map(g=>"/guides/"+g.id+"/"),
  ...problems.map(p=>"/help/"+p.id+"/"),
