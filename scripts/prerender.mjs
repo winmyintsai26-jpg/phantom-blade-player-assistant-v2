@@ -45,8 +45,9 @@ function structuredData(page){
  const isHome=page.route==="/";
  const website={"@context":"https://schema.org","@type":"WebSite",name:"Phantom Blade Zero Player Assistant",url:origin+"/",description:"Independent source-researched player guidance; not affiliated with S-GAME."};
  const entity={"@context":"https://schema.org","@type":"WebPage",name:page.title,url:canonical,description:page.description,isPartOf:{"@type":"WebSite",name:website.name,url:website.url},inLanguage:"en"};
- const crumbs=page.route.split("/").filter(Boolean);
- const breadcrumb=crumbs.length?{"@context":"https://schema.org","@type":"BreadcrumbList",itemListElement:[{"@type":"ListItem",position:1,name:"Home",item:origin+"/"},...crumbs.map((part,i)=>({"@type":"ListItem",position:i+2,name:i===crumbs.length-1?page.title:part.replace(/-/g," "),item:origin+"/"+crumbs.slice(0,i+1).join("/")+"/"}))]}:null;
+ const parents=page.route.startsWith("/objectives/")&&page.route!=="/objectives/"?[{name:"Objective Solver",url:origin+"/objectives/"}]:page.route.startsWith("/help/")&&page.route!=="/help/"?[{name:"Player Help Center",url:origin+"/help/"}]:[];
+ const breadcrumbs=[{name:"Home",url:origin+"/"},...parents,...(!isHome?[{name:page.title,url:canonical}]:[])];
+ const breadcrumb=!isHome?{"@context":"https://schema.org","@type":"BreadcrumbList",itemListElement:breadcrumbs.map((item,i)=>({"@type":"ListItem",position:i+1,name:item.name,item:item.url}))}:null;
  return [isHome?website:null,entity,breadcrumb].filter(Boolean).map(obj=>'<script type="application/ld+json">'+JSON.stringify(obj).replace(/</g,"\\u003c")+'</script>').join("");
 }
 const unique=new Set();
