@@ -15,7 +15,7 @@ const details={
 };
 export const objectiveRecords=collectibles.filter(c=>Object.hasOwn(details,c.id)).map(c=>{
  const d=details[c.id],region=findRegion(c.region);
- return {...c,stableId:c.id,route:"/objectives/"+c.region+"/"+c.sourceNumber+"/",regionName:region.name,regionUrl:"/regions/"+c.region+"/",nearestBell:d.bell,requiredProgression:d.required,prerequisites:d.required,acquisitionSteps:d.instructions,completionConfirmation:d.confirm,missableWarning:d.warning,relatedIds:d.related,relatedProblem:d.problem||null,nextProblem:d.nextProblem||null,relatedGuide:d.guide||null,verification:"Source-supported · not gameplay-tested",sourceNote:d.sourceNote,sources:[{name:"PowerPyx — "+region.name+" collectible walkthrough",url:region.source},...(d.extraSources||[])]};
+ return {...c,stableId:c.id,route:"/objectives/"+c.region+"/"+c.sourceNumber+"/",regionName:region.name,regionUrl:"/regions/"+c.region+"/",nearestBell:d.bell,requiredProgression:d.required,prerequisites:d.required,acquisitionSteps:d.instructions,stepImages:d.stepImages||{},completionConfirmation:d.confirm,missableWarning:d.warning,relatedIds:d.related,relatedProblem:d.problem||null,nextProblem:d.nextProblem||null,relatedGuide:d.guide||null,verification:"Source-supported · not gameplay-tested",sourceNote:d.sourceNote,sources:[{name:"PowerPyx — "+region.name+" collectible walkthrough",url:region.source},...(d.extraSources||[])]};
 });
 export const getObjective=(region,number)=>objectiveRecords.find(o=>o.region===region&&o.sourceNumber===Number(number));
 export const getObjectiveById=id=>objectiveRecords.find(o=>o.id===id);
