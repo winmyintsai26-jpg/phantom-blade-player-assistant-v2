@@ -26,6 +26,27 @@ test("all generated routes have unique titles, descriptions and canonical",async
   assert.ok(html.includes('/assets/'),route+" missing compiled assets");
  }
 });
+test("homepage gives crawlers a useful player guide and real internal links without JavaScript",async()=>{
+ const html=await read("index.html");
+ assert.match(html,/<title>Phantom Blade Zero Player Guide \| Bosses, Items &amp; Routes \| Phantom Blade Zero V2<\/title>/);
+ assert.match(html,/<meta name="description" content="[^"]*Phantom Blade Zero player guide[^"]*">/i);
+ assert.match(html,/<main id="main" class="prerender-fallback">[\s\S]*?<h1[^>]*>Phantom Blade Zero Player Guide<\/h1>/);
+ const linked=[...html.matchAll(/<a href="(\/[^"#?]+\/)"[^>]*>/g)].map(m=>m[1]);
+ for(const route of ["/help/","/objectives/","/regions/weeping-creek/","/help/jing-ye-dismounted/","/guides/healers-legacy/"]){
+  assert.ok(linked.includes(route),"Missing crawlable link to "+route);
+ }
+ for(const link of linked)assert.ok(expected.includes(link),"Homepage points to missing route: "+link);
+ assert.ok(linked.length>=regions.length+problems.length+objectiveRecords.length+guides.length);
+});
+test("production canonical and sitemap use the owned domain, with editorial indexing gates intact",async()=>{
+ assert.equal(manifest.origin,"https://phantombladeplayerguide.com");
+ const html=await read("index.html");
+ assert.match(html,/<link rel="canonical" href="https:\/\/phantombladeplayerguide\.com\/"/);
+ const robots=await read("robots.txt");
+ assert.match(robots,/Sitemap: https:\/\/phantombladeplayerguide\.com\/sitemap\.xml/);
+ if(!manifest.editorialApproved)assert.equal(manifest.indexingEnabled,false);
+ if(!manifest.indexingEnabled)assert.match(robots,/Disallow: \/\n/);
+});
 test("semantic structured data exists for every prerendered page and links only to valid route parents",async()=>{
  for(const route of expected){
   const html=await read(route==="/"?"index.html":route.slice(1)+"index.html");
