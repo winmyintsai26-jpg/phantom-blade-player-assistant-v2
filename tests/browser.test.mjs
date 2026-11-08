@@ -6,6 +6,7 @@ import {problems,findProblems} from "../src/help-problems.js";
 import {regions} from "../src/regions.js";
 import {guides} from "../src/guides.js";
 import {objectiveRecords} from "../src/objectives.js";
+import {renderStepImage} from "../src/step-media.js";
 
 const origin="http://127.0.0.1:4178";
 // External promotional images and fonts must not block functional route QA.
@@ -56,6 +57,19 @@ try{
       await page.locator("#objective-search").fill("totally unknown item");
       assert.match(await page.locator("#objective-results").innerText(),/No matching record/);
       assert.deepEqual(errors,[]);
+      await page.close();
+    });
+    await test("authorized step images reserve space and fail to readable text fallback",async()=>{
+      const page=await browser.newPage();
+      await openPage(page,origin+"/guides/healers-legacy/");
+      const html=renderStepImage({src:"/images/nonexistent-route-reference.webp",alt:"Missing route reference",caption:"Bridge reference",attribution:"Example only in test",status:"Not game-tested",authorized:true});
+      await page.locator("#guide-step-0").evaluate((el,html)=>el.insertAdjacentHTML("beforeend",html),html);
+      const img=page.locator("#guide-step-0 .step-media img");
+      await img.evaluate(el=>new Promise(resolve=>{if(el.complete)return resolve();el.addEventListener("load",resolve,{once:true});el.addEventListener("error",resolve,{once:true})}));
+      assert.equal(await img.isHidden(),true);
+      assert.equal(await page.locator("#guide-step-0 .step-media-fallback").isVisible(),true);
+      assert.match(await page.locator("#guide-step-0").innerText(),/Bridge reference/);
+      assert.match(await page.locator("#guide-step-0").innerText(),/Find the Twin Flesh Lilies/);
       await page.close();
     });
     await test("Phase 4 manual states and missable warnings remain local and exportable",async()=>{
