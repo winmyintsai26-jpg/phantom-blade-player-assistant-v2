@@ -208,3 +208,27 @@
 .footer-links{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
 .footer-links a{font-size:12px;color:#e2c49a}
 .footer-links p{margin:5px 0 0;font-size:11px;color:#94a0aa}
+
+
+/* Phase 2: small, accessible objective solver layouts */
+.objective-page{max-width:940px;margin:54px auto 100px;padding:0 22px}
+.objective-page h1{font-size:clamp(36px,5vw,64px);line-height:1.1;margin:20px 0}
+.objective-page a:not(.back){color:#e1bc86;text-decoration:underline;text-underline-offset:3px}
+.objective-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:16px;margin:25px 0}
+.objective-card{display:block;border:1px solid #394550;background:#161d25;padding:22px;color:#e6edf1!important;text-decoration:none!important}
+.objective-card h3{font-size:21px;margin:12px 0}
+.objective-card p,.objective-card small{font-size:13px}
+.objective-card:hover{border-color:#d5ab72}
+.objective-section{border-top:1px solid #3d4650;margin:32px 0;padding-top:25px}
+.objective-section h2,.objective-intro h2{font-size:26px}
+.objective-section li{color:#c7d0d9;padding:8px 0;line-height:1.75}
+.objective-intro{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:24px;align-items:start;background:#172029;border:1px solid #34414f;padding:23px}
+.objective-intro figure{margin:0;text-align:center}
+.objective-intro img{max-width:140px;width:100%;height:130px;object-fit:contain}
+.objective-intro figcaption{font-size:11px;color:#b7bec7}
+.objective-search{display:block;margin-top:24px;color:#d5aa72}
+.objective-search input{display:block;background:#172029;color:#fff;border:1px solid #556270;padding:13px;margin-top:9px;width:100%;max-width:480px}
+.objective-check{display:flex;gap:12px;align-items:center;color:#e1e6ea}
+.objective-check input{width:20px;height:20px;accent-color:#d5aa72}
+.objective-entry-link{display:inline-block;margin-bottom:12px;font-size:13px;font-weight:700;color:#dfb882}
+@media(max-width:620px){.objective-page{margin:30px auto 75px;padding:0 14px}.objective-intro{grid-template-columns:1fr}.objective-intro figure{text-align:left}}
