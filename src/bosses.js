@@ -14,7 +14,8 @@ export const bossSources={
 // An alias is NOT automatically an identical opponent or a gameplay phase.
 const roster=[
  ["Prologue",[
- ["Zuo Shang","Masters",["Zuo Shang, the Order's Shadow Sovereign","Young Zuo Shang"]],
+ ["Zuo Shang","Masters",["Young Zuo Shang"]],
+ ["Zuo Shang, the Order's Shadow Sovereign","Masters",["Prologue duel, Zuo Shang"]],
  ["The Hunt, Hunter of the Order","Perfect Transcensions",[]]
  ]],
  ["weeping-creek",[
