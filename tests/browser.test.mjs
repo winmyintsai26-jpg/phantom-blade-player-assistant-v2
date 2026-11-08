@@ -2,6 +2,10 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {spawn} from "node:child_process";
 import {chromium} from "playwright";
+import {problems,findProblems} from "../src/help-problems.js";
+import {regions} from "../src/regions.js";
+import {guides} from "../src/guides.js";
+import {objectiveRecords} from "../src/objectives.js";
 
 const origin="http://127.0.0.1:4178";
 // External promotional images and fonts must not block functional route QA.
@@ -26,7 +30,7 @@ try{
       const page=await browser.newPage();
       const errors=[];page.on("pageerror",e=>errors.push(e.message));
       await openPage(page,origin+"/objectives/");
-      assert.equal(await page.locator(".objective-card").count(),9);
+      assert.equal(await page.locator(".objective-card").count(),objectiveRecords.length);
       await page.locator("#objective-search").fill("outlaw trap");
       assert.ok(await page.locator(".objective-card").count()>=1);
       await openPage(page,origin+"/regions/weeping-creek/");
@@ -56,8 +60,8 @@ try{
       const errors=[];page.on("pageerror",e=>errors.push(e.message));
       await openPage(page,origin+"/");
       assert.match(await page.locator("h1").innerText(),/Every obstacle/);
-      assert.equal(await page.locator(".region-card").count(),9);
-      for(const route of ["weeping-creek","crimson-forest","village-of-lu","pangzhen","mandate-encampment","meigu-lake","mountain-of-imprisonment","mirage-estate","mount-soulrend"]){
+      assert.equal(await page.locator(".region-card").count(),regions.length);
+      for(const {id:route} of regions){
         await openPage(page,origin+"/regions/"+route+"/");
         assert.equal(await page.locator(".region-page h1").count(),1,route);
         assert.equal(await page.locator(".region-cover img").count(),1,route);
@@ -77,7 +81,7 @@ try{
       assert.deepEqual(errors,[]);
       await page.close();
     });
-    await test("all nine regions use distinct hero pictures",async()=>{const page=await browser.newPage();const images=[];for(const slug of ["weeping-creek","crimson-forest","village-of-lu","pangzhen","mandate-encampment","meigu-lake","mountain-of-imprisonment","mirage-estate","mount-soulrend"]){await openPage(page,origin+"/regions/"+slug+"/");images.push(await page.locator(".region-cover img").getAttribute("src"));}assert.equal(new Set(images).size,9);await page.close();});
+    await test("all nine regions use distinct hero pictures",async()=>{const page=await browser.newPage();const images=[];for(const {id:slug} of regions){await openPage(page,origin+"/regions/"+slug+"/");images.push(await page.locator(".region-cover img").getAttribute("src"));}assert.equal(new Set(images).size,regions.length);await page.close();});
     await test("all four homepage workspaces render complete steps with region links",async()=>{
       const page=await browser.newPage();
       for(const [slug,minimum] of [["healers-legacy",9],["ending-checkpoints",7],["missable-preflight",8],["combat-diagnostics",8]]){
@@ -107,12 +111,13 @@ try{
       const page=await browser.newPage();
       const errors=[];page.on("pageerror",e=>errors.push(e.message));
       await openPage(page,origin+"/help/");
-      assert.equal(await page.locator(".help-card").count(),7);
+      assert.equal(await page.locator(".help-card").count(),problems.length);
       await page.locator("#problem-search").fill("Jing Ye");
       assert.equal(await page.locator(".help-card").count(),1);
       await page.locator("#problem-search").fill("");
       await page.locator("#problem-category").selectOption("Quests & Bugs");
-      assert.equal(await page.locator(".help-card").count(),1);
+      assert.equal(await page.locator(".help-card").count(),findProblems("","Quests & Bugs").length);
+      assert.ok(findProblems("","Quests & Bugs").some(p=>p.id==="pipa-ng-plus"));
       await openPage(page,origin+"/help/jing-ye-dismounted/");
       assert.equal(await page.locator(".help-steps li").count(),5);
       await page.locator('[data-diagnosis="1"]').click();
@@ -122,10 +127,10 @@ try{
       assert.deepEqual(errors,[]);
       await page.close();
     });
-    await test("all seven help deep links render and survive direct reload",async()=>{
+    await test("all current help deep links render and survive direct reload",async()=>{
       const page=await browser.newPage({viewport:{width:1366,height:768}});
       const errors=[];page.on("pageerror",e=>errors.push(e.message));
-      for(const slug of ["jing-ye-dismounted","sha-chi-tower-base","red-seven-sword","combat-rhythm","pipa-ng-plus","drunken-sword","beginner-story"]){
+      for(const {id:slug} of problems){
         const response=await openPage(page,origin+"/help/"+slug+"/");
         assert.equal(response.status(),200,slug);
         assert.equal(await page.locator(".help-article h1").count(),1,slug);
