@@ -125,14 +125,33 @@ export function searchBosses({query="",region="",category=""}={}){
 export const bossCounts=()=>({total:bosses.length,located:bosses.filter(b=>b.regionName).length,strategies:bosses.filter(b=>b.hasStrategy).length,incomplete:bosses.filter(b=>!b.hasStrategy||!b.location).length});
 export const combatProblems=[{id:"dodge",label:"Dodging attacks"},{id:"parry",label:"Parrying"},{id:"cues",label:"Recognizing attacks"},{id:"damage",label:"Low damage"},{id:"healing",label:"Healing and survival"},{id:"preparation",label:"Preparation"}];
 // Never synthesize an answer from generic boss classifications or unvalidated keyword matching.
+const problemCue={
+ dodge:/dodge|sideways|avoid|charge path|reposition|move out/i,
+ parry:/parry|block|counter|guard|shield/i,
+ cues:/cue|watch|recogniz|observe|windup|animation|phase/i,
+ damage:/damage|punish|attack|combo|pressure|break|opening/i,
+ healing:/heal|health|surviv|resource|sha-chi/i,
+ preparation:/prepar|before|equip|weapon|dread axe|save|reserve/i
+};
+const phaseChoice={
+ "jing-ye-the-outlaw":{"Mounted phase":0,"Shield phase":1,"Sword phase":2}
+};
 export function bossAdvice(slug,phase="",problem=""){
  const b=bossBySlug(slug);if(!b)return null;
  const help=problems.find(p=>p.id===b.helpId)||null;
- if(help&&phase&&b.phases.length){
-  const match=help.choices.find(c=>c.label.toLowerCase().includes(phase.toLowerCase().replace(" phase","")));
-  if(match)return {kind:"documented",label:match.lead,steps:match.steps,source:"Existing player problem guide",href:"/help/"+help.id+"/"};
+ const pattern=problemCue[problem];
+ const generalHref="/guides/combat-diagnostics/";
+ if(!help||!pattern)return {kind:"missing",label:"Strategy not yet documented",steps:[],href:help?"/help/"+help.id+"/":null,generalHref};
+ let steps=[];
+ let label=problem==="preparation"?"Preparation from existing boss guide":"Source-researched "+problem+" guidance";
+ if(phase&&b.phases.length){
+  const idx=phaseChoice[b.slug]?.[phase];
+  const choice=Number.isInteger(idx)?help.choices[idx]:null;
+  if(choice){steps=choice.steps.filter(x=>pattern.test(x));label=choice.lead}
+ }else{
+  const refs=[...help.steps.map(x=>x.body),...help.choices.flatMap(x=>x.steps),...(problem==="preparation"?help.prerequisites:[])];
+  steps=refs.filter(x=>pattern.test(x)).slice(0,5);
  }
- // Only help text explicitly attached to this boss qualifies as boss-specific.
- if(help&&problem==="preparation"&&help.prerequisites.length)return {kind:"documented",label:"Before this encounter",steps:help.prerequisites,source:"Existing player problem guide",href:"/help/"+help.id+"/"};
- return {kind:"missing",label:"Strategy not yet documented for this phase or problem",steps:[],href:help?"/help/"+help.id+"/":null,generalHref:"/guides/combat-diagnostics/"};
+ if(steps.length)return {kind:"documented",label,steps,source:"Existing player problem guide",href:"/help/"+help.id+"/"};
+ return {kind:"missing",label:"No boss-specific documentation for that problem and phase",steps:[],href:"/help/"+help.id+"/",generalHref};
 }
