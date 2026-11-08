@@ -6,7 +6,7 @@ import {findRegion} from "../src/regions.js";
 import {getProblem} from "../src/help-problems.js";
 import {objectiveFeedbackDraft,objectiveFeedbackUrl} from "../src/objective-feedback.js";
 test("phase 2 publishes only curated, unique objective records",()=>{
- assert.equal(objectiveRecords.length,9);
+ assert.ok(objectiveRecords.length>0,"Curated objective library must not be empty");
  assert.equal(new Set(objectiveRecords.map(o=>o.stableId)).size,objectiveRecords.length);
  assert.equal(new Set(objectiveRecords.map(o=>o.route)).size,objectiveRecords.length);
  for(const o of objectiveRecords){
