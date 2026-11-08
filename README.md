@@ -19,18 +19,22 @@ npm run check
 npm run dev
 ```
 
-## Content and media integrity
+## Current content and verification status
 
-- **Healer's Legacy and selected regional preflight checkpoints are source-researched**; it is not independently tested in-game.
-- Nine region indexes are available; item-by-item walkthroughs are not yet imported. Other workspaces are intentionally labeled as research/planning tools, not completed walkthroughs.
-- All artwork in the app is original abstract CSS illustration, not game screenshots. There are **no externally hotlinked game images**. Add screenshots only after rights and in-game location are verified.
-- Checkboxes represent progress on this device, not the actual game state.
-- Preview is deliberately `noindex,nofollow` and is not ready for public search indexing.
-- No Google Search Console, AdSense, canonical domain or sitemap migration has been performed.
+- Nine region guides, seven player-problem guides and four original workspaces are present. Weeping Creek has 61 numbered source-index entries.
+- All routes include confidence labels. These source-researched directions are **not independently gameplay-tested**.
+- Each region guide uses an externally hosted promotional image and a fallback. Promotional art must not be confused with an item-location screenshot. Confirm rights and attribution before commercial monetization.
+- Progress checks and spoiler settings use browser localStorage, not the game save.
+- About and Privacy pages document site ownership and data handling.
+- The Workers preview remains noindex and advertising is disabled until approval.
 
-## Release gate
+## Deployment and AdSense
 
-Before public launch: verify every quest step in-game, confirm source links and version-specific deadlines, secure relevant screenshot rights, run desktop/mobile browser checks, and confirm accessibility, routes, and Cloudflare deployment. Do not claim a 9/10 quality score without these checks.
+The verified GitHub Actions workflow has a **deploy** job following CI. Configure the two Cloudflare repository secrets (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`) to authorize deployment. If these secrets are absent, the deployment job logs a skip rather than claiming a successful publication.
+
+For custom domain, AdSense account verification, privacy, indexing, `ads.txt`, consent requirements, publisher ID settings, and the separate ad-serving activation gate, see [MONETIZATION_RELEASE.md](MONETIZATION_RELEASE.md).
+
+**Never publish ads before Google approves the site and any required consent mechanism is in place.**
 
 ## Project structure
 
