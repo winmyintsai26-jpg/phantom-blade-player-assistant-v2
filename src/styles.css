@@ -232,3 +232,13 @@
 .objective-check input{width:20px;height:20px;accent-color:#d5aa72}
 .objective-entry-link{display:inline-block;margin-bottom:12px;font-size:13px;font-weight:700;color:#dfb882}
 @media(max-width:620px){.objective-page{margin:30px auto 75px;padding:0 14px}.objective-intro{grid-template-columns:1fr}.objective-intro figure{text-align:left}}
+
+
+/* Objective outcome reports are separate from completion progress */
+.objective-report{margin-top:24px;padding:20px;border:1px solid #46515f;background:#172029}
+.objective-report h3{font-size:21px}
+.objective-report label{display:block;color:#c8d3dc;font-size:13px;margin:12px 0}
+.objective-report input,.objective-report select,.objective-report textarea{display:block;width:100%;margin-top:6px;padding:11px 12px;background:#0d151c;color:#f1f4f5;border:1px solid #536475;font:inherit;border-radius:2px}
+.objective-report button{padding:12px 18px;color:#15110d;background:#d5aa72;border:0;font-weight:700;cursor:pointer}
+.objective-report button:disabled{opacity:.5;cursor:not-allowed}
+.objective-report p[role=status]{font-size:12px;margin:12px 0 0}
