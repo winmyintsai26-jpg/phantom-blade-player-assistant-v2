@@ -60,6 +60,20 @@ try{
       }
       await page.close();
     });
+    await test("About and Privacy pages render and are reachable from site footer",async()=>{
+      const page=await browser.newPage();
+      await openPage(page,origin+"/");
+      assert.equal(await page.locator('.footer-links a[href="/about/"]').count(),1);
+      assert.equal(await page.locator('.footer-links a[href="/privacy/"]').count(),1);
+      for(const pathname of ["/about/","/privacy/"]){
+        const response=await openPage(page,origin+pathname);
+        assert.equal(response.status(),200,pathname);
+        assert.equal(await page.locator(".site-info h1").count(),1,pathname);
+        await page.reload({waitUntil:"domcontentloaded"});
+        assert.equal(await page.locator(".site-info").count(),1,pathname);
+      }
+      await page.close();
+    });
     await test("Player Help Center filters, diagnosis and feedback work",async()=>{
       const page=await browser.newPage();
       const errors=[];page.on("pageerror",e=>errors.push(e.message));
