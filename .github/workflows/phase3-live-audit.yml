@@ -1,0 +1,28 @@
+name: Phase 3 live production audit
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+      - name: Verify live pages and deployed revision
+        env:
+          V2_SITE_ORIGIN: https://phantom-blade-player-assistant-v2.winmyintsai26.workers.dev
+        run: node scripts/live-smoke.mjs
+      - name: Verify desktop and mobile player journeys
+        env:
+          V2_SITE_ORIGIN: https://phantom-blade-player-assistant-v2.winmyintsai26.workers.dev
+        run: node scripts/live-browser-smoke.mjs
