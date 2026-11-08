@@ -1,15 +1,21 @@
-import {objectiveRecords,getObjectiveById,searchObjectives} from "./objectives.js";
+import {objectiveRecords,getObjectiveById} from "./objectives.js";
+import {findItemRecords,itemTypes} from "./item-finder.js";
+import {regions} from "./regions.js";
 import {collectibleArt} from "./item-art.js";
 import {collectibles} from "./collectibles.js";
 import {objectiveFeedbackUrl} from "./objective-feedback.js";
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const card=o=>`<a class="objective-card" href="${o.route}"><span class="eyebrow">${esc(o.type)} · ${esc(o.regionName)}</span><h3>${esc(o.name)}</h3><p>Start at: ${esc(o.nearestBell)}</p><small>${esc(o.verification)} →</small></a>`;
 export function renderObjectiveIndex(layout){
- document.title="Objective Solver | Phantom Blade Zero V2";
- layout(`<section class="objective-page"><a class="back" href="/">← Home</a><span class="eyebrow">— OBJECTIVE SOLVER / SOURCE-RESEARCHED</span><h1>What do you need to find?</h1><p class="intro">Choose a documented objective to see the starting Bell, prerequisites, route, success check, and troubleshooting. Only curated routes appear here; this is not a complete inventory.</p><label class="objective-search">Search objectives <input id="objective-search" type="search" placeholder="Search items, regions or Bells…" aria-label="Search objectives"></label><p id="objective-count" role="status"></p><div class="objective-grid" id="objective-results"></div></section>`);
- const search=document.querySelector("#objective-search"),list=document.querySelector("#objective-results"),count=document.querySelector("#objective-count");
- const draw=()=>{const found=searchObjectives(search.value);count.textContent=found.length+" curated objectives";list.innerHTML=found.length?found.map(card).join(""):'<p class="empty">No documented objective yet. Try the region index or Player Help Center.</p>'};
- search.addEventListener("input",draw);draw();
+ document.title="Smart Item Finder | Phantom Blade Zero Player Guide";
+ layout(`<section class="objective-page"><a class="back" href="/">← Home</a><span class="eyebrow">— SMART ITEM FINDER / SOURCE-RESEARCHED</span><h1>Find an item or Bell</h1><p class="intro">Search the existing regional collectible index. Curated routes show prerequisites and confirmed-source steps; other entries lead to source-indexed regional references, not invented walkthroughs.</p><div class="finder-controls"><label>Item or landmark name<input id="objective-search" type="search" placeholder="Search an item, Bell or location…" aria-label="Search objectives"></label><label>Region<select id="item-region" aria-label="Filter items by region"><option value="">All regions</option>${regions.map(r=>`<option value="${esc(r.id)}">${esc(r.name)}</option>`).join("")}</select></label><label>Item category<select id="item-type" aria-label="Filter items by category"><option value="">All categories</option>${itemTypes.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join("")}</select></label></div><p id="objective-count" role="status" aria-live="polite"></p><div class="objective-grid" id="objective-results"></div><p class="note">These records are written-source references, not in-game verification. A missing starting Bell or route is labeled clearly.</p></section>`);
+ const search=document.querySelector("#objective-search"),region=document.querySelector("#item-region"),type=document.querySelector("#item-type"),list=document.querySelector("#objective-results"),count=document.querySelector("#objective-count");
+ const draw=()=>{
+  const found=findItemRecords({query:search.value,region:region.value,type:type.value});
+  count.textContent=found.length+" matching records"+(!search.value&&!region.value&&!type.value?" · showing curated starting points":"");
+  list.innerHTML=found.length?found.map(o=>`<a class="objective-card" href="${esc(o.href)}"><span class="eyebrow">${esc(o.type)} · ${esc(o.regionName)}</span><h3>${esc(o.name)}</h3><p>${o.nearestBell?"Starting Bell / landmark: "+esc(o.nearestBell):"Starting Bell not established · region: "+esc(o.area)}</p><small>${esc(o.status)} ↗</small>${o.isCurated?"<p>Step-by-step instructions and confirmation available</p>":"<p>Source-indexed entry only · open regional reference</p>"}</a>`).join(""):'<p class="empty">No matching record. Try a shorter item name, a different region, or clear your filters. <a href="/contact/">Report a missing item</a>.</p>';
+ };
+ [search,region,type].forEach(x=>x.addEventListener(x===search?"input":"change",draw));draw();
 }
 export function renderObjective(layout,o){
  document.title=o.name+" — How to obtain | Phantom Blade Zero V2";
