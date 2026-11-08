@@ -3,7 +3,7 @@
 const origin=(process.env.V2_SITE_ORIGIN||"https://phantom-blade-player-assistant-v2.winmyintsai26.workers.dev").replace(/\/$/,"");
 const regions=["weeping-creek","crimson-forest","village-of-lu","pangzhen","mandate-encampment","meigu-lake","mountain-of-imprisonment","mirage-estate","mount-soulrend"];
 const problems=["jing-ye-dismounted","sha-chi-tower-base","red-seven-sword","combat-rhythm","pipa-ng-plus","drunken-sword","beginner-story"];
-const urls=["/","/help/",...regions.map(x=>"/regions/"+x+"/"),...problems.map(x=>"/help/"+x+"/")];
+const urls=["/","/help/","/about/","/privacy/",...regions.map(x=>"/regions/"+x+"/"),...problems.map(x=>"/help/"+x+"/")];
 const results=await Promise.all(urls.map(async pathname=>{
  try{
   const response=await fetch(origin+pathname,{redirect:"follow",signal:AbortSignal.timeout(12000),headers:{"Cache-Control":"no-cache"}});
