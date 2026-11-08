@@ -16,12 +16,17 @@ Run locally:
 ```bash
 npm install
 npm run check
+npm run test:build
+npx playwright install chromium
+npm run test:browser
 npm run dev
 ```
 
+The independent **Phase 3 live production audit** workflow can be started manually after Cloudflare deploys the newest commit. It compares `build-manifest.json` with the workflow revision and checks desktop/mobile routes, search, filters and feedback without submitting player data. A successful build is not proof that the same revision is deployed.
+
 ## Current content and verification status
 
-- Nine region guides, seven player-problem guides and four original workspaces are present. Weeping Creek has 61 numbered source-index entries.
+- Nine region guides, eight player-problem guides, nine curated objective detail pages and four original workspaces are present. Weeping Creek has 61 numbered source-index entries.
 - All routes include confidence labels. These source-researched directions are **not independently gameplay-tested**.
 - Each region guide uses an externally hosted promotional image and a fallback. Promotional art must not be confused with an item-location screenshot. Confirm rights and attribution before commercial monetization.
 - Progress checks and spoiler settings use browser localStorage, not the game save.
