@@ -10,7 +10,7 @@ import {objectiveRecords} from "../src/objectives.js";
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..","dist");
 const read=f=>readFile(path.join(root,f),"utf8");
 const manifest=JSON.parse(await read("build-manifest.json"));
-const expected=["/","/help/","/objectives/",...objectiveRecords.map(o=>o.route),"/about/","/privacy/","/progress/",...regions.map(r=>"/regions/"+r.id+"/"),...guides.map(g=>"/guides/"+g.id+"/"),...problems.map(p=>"/help/"+p.id+"/")];
+const expected=["/","/help/","/objectives/",...objectiveRecords.map(o=>o.route),"/about/","/privacy/","/contact/","/progress/",...regions.map(r=>"/regions/"+r.id+"/"),...guides.map(g=>"/guides/"+g.id+"/"),...problems.map(p=>"/help/"+p.id+"/")];
 test("all generated routes have unique titles, descriptions and canonical",async()=>{
  assert.equal(new Set(expected).size,expected.length);
  assert.deepEqual(new Set(manifest.routes),new Set(expected));
@@ -24,6 +24,22 @@ test("all generated routes have unique titles, descriptions and canonical",async
   assert.ok(html.includes('<link rel="canonical" href="'+manifest.origin+route+'">'),route);
   assert.ok(html.includes('name="robots" content="'+(manifest.indexingEnabled?"index,follow":"noindex,nofollow")+'"'),route);
   assert.ok(html.includes('/assets/'),route+" missing compiled assets");
+ }
+});
+test("semantic structured data exists for every prerendered page and links only to valid route parents",async()=>{
+ for(const route of expected){
+  const html=await read(route==="/"?"index.html":route.slice(1)+"index.html");
+  const blocks=[...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(m=>JSON.parse(m[1]));
+  assert.ok(blocks.some(x=>x["@type"]==="WebPage"&&x.url===manifest.origin+route),route);
+  if(route==="/")assert.ok(blocks.some(x=>x["@type"]==="WebSite"));
+  else{
+   const trail=blocks.find(x=>x["@type"]==="BreadcrumbList");
+   assert.ok(trail,route);
+   assert.equal(trail.itemListElement[0].item,manifest.origin+"/");
+   for(const crumb of trail.itemListElement){
+    assert.ok(expected.includes(new URL(crumb.item).pathname),"nonexistent breadcrumb target: "+crumb.item);
+   }
+  }
  }
 });
 test("sitemap contains valid XML header and every canonical URL",async()=>{
