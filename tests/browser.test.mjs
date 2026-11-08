@@ -50,6 +50,9 @@ try{
       assert.equal(storageBefore,null);
 
       await page.locator("#objective-completed").check();
+      // Outcome report must never toggle or erase the player's saved completion choice.
+      assert.equal(await page.locator("#objective-completed").isChecked(),true);
+
       await page.reload({waitUntil:"domcontentloaded"});
       assert.equal(await page.locator("#objective-completed").isChecked(),true);
       assert.deepEqual(errors,[]);
@@ -98,7 +101,9 @@ try{
       await openPage(page,origin+"/");
       assert.equal(await page.locator('.footer-links a[href="/about/"]').count(),1);
       assert.equal(await page.locator('.footer-links a[href="/privacy/"]').count(),1);
-      for(const pathname of ["/about/","/privacy/"]){
+      assert.equal(await page.locator('.footer-links a[href="/contact/"]').count(),1);
+      assert.equal(await page.locator('.header nav a[href="/objectives/"]').count(),1);
+      for(const pathname of ["/about/","/privacy/","/contact/"]){
         const response=await openPage(page,origin+pathname);
         assert.equal(response.status(),200,pathname);
         assert.equal(await page.locator(".site-info h1").count(),1,pathname);
@@ -235,7 +240,7 @@ try{
     });
     await test("mobile layout has no horizontal overflow on home and region",async()=>{
       const page=await browser.newPage({viewport:{width:375,height:812},isMobile:true,hasTouch:true});
-      for(const path of ["/","/regions/weeping-creek/","/regions/village-of-lu/"]){
+      for(const path of ["/","/help/","/objectives/","/contact/","/regions/weeping-creek/","/regions/village-of-lu/"]){
         await openPage(page,origin+path);
         const sizes=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth}));
         assert.ok(sizes.scroll<=sizes.client+2,path+" overflow "+JSON.stringify(sizes));
