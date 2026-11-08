@@ -1,9 +1,15 @@
 // Non-blocking real-network smoke check for the existing Cloudflare Worker.
 // A 200 response is not proof that the current GitHub commit was deployed.
 const origin=(process.env.V2_SITE_ORIGIN||"https://phantom-blade-player-assistant-v2.winmyintsai26.workers.dev").replace(/\/$/,"");
-const regions=["weeping-creek","crimson-forest","village-of-lu","pangzhen","mandate-encampment","meigu-lake","mountain-of-imprisonment","mirage-estate","mount-soulrend"];
-const problems=["jing-ye-dismounted","sha-chi-tower-base","red-seven-sword","combat-rhythm","pipa-ng-plus","drunken-sword","beginner-story"];
-const urls=["/","/help/","/about/","/privacy/",...regions.map(x=>"/regions/"+x+"/"),...problems.map(x=>"/help/"+x+"/")];
+import {regions} from "../src/regions.js";
+import {problems} from "../src/help-problems.js";
+import {objectiveRecords} from "../src/objectives.js";
+import {guides} from "../src/guides.js";
+const urls=["/","/help/","/objectives/","/about/","/privacy/","/contact/","/progress/",
+ ...regions.map(r=>"/regions/"+r.id+"/"),
+ ...problems.map(p=>"/help/"+p.id+"/"),
+ ...objectiveRecords.map(o=>o.route),
+ ...guides.map(g=>"/guides/"+g.id+"/")];
 const results=await Promise.all(urls.map(async pathname=>{
  try{
   const response=await fetch(origin+pathname,{redirect:"follow",signal:AbortSignal.timeout(12000),headers:{"Cache-Control":"no-cache"}});
