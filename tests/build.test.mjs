@@ -10,7 +10,7 @@ import {objectiveRecords} from "../src/objectives.js";
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..","dist");
 const read=f=>readFile(path.join(root,f),"utf8");
 const manifest=JSON.parse(await read("build-manifest.json"));
-const expected=["/","/help/","/objectives/",...objectiveRecords.map(o=>o.route),"/about/","/privacy/","/contact/","/progress/",...regions.map(r=>"/regions/"+r.id+"/"),...guides.map(g=>"/guides/"+g.id+"/"),...problems.map(p=>"/help/"+p.id+"/")];
+const expected=["/","/solver/","/help/","/objectives/",...objectiveRecords.map(o=>o.route),"/about/","/privacy/","/contact/","/progress/",...regions.map(r=>"/regions/"+r.id+"/"),...guides.map(g=>"/guides/"+g.id+"/"),...problems.map(p=>"/help/"+p.id+"/")];
 test("all generated routes have unique titles, descriptions and canonical",async()=>{
  assert.equal(new Set(expected).size,expected.length);
  assert.deepEqual(new Set(manifest.routes),new Set(expected));
