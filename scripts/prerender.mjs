@@ -29,7 +29,16 @@ if(publish&&origin.endsWith(".workers.dev"))throw new Error("Set a reviewed prod
 if((publisherId||adActivationRequested)&&origin.endsWith(".workers.dev"))throw new Error("Use a custom production domain for AdSense verification; workers.dev is preview-only.");
 
 const pages=[
- {route:"/",title:"Phantom Blade Zero Player Assistant V2",description:"Evidence-first Phantom Blade Zero player help, guide library and region checklist.",main:'<h1>Phantom Blade Zero Player Assistant</h1><p>Find player help, guides and region routes.</p><p><a href="/help/">Player Help Center</a></p>'},
+ {route:"/",title:"Phantom Blade Zero Player Guide | Bosses, Items & Routes",description:"Independent Phantom Blade Zero player guide for boss fights, item locations, Bells, missable quests and step-by-step troubleshooting with evidence labels.",main:
+ '<section aria-labelledby="homepage-heading"><h1 id="homepage-heading">Phantom Blade Zero Player Guide</h1><p>An independent Phantom Blade Zero player guide for players who need a next step, not just a location name. Find starting Bells, prerequisites, acquisition routes, boss troubleshooting and ways to confirm an objective is complete. Published sources support these guides; they have not been independently game-tested.</p>'+
+ '<h2>Find help for your next objective</h2><ul>'+
+ '<li><a href="/help/">Bosses, map navigation and quest troubleshooting</a></li>'+
+ '<li><a href="/objectives/">Item locations, starting Bells and acquisition steps</a></li>'+
+ '<li><a href="/progress/">Saved checklists and progress backup</a></li></ul>'+
+ '<h2>Popular player problems</h2><ul>'+problems.map(p=>'<li><a href="/help/'+htmlEscape(p.id)+'/">'+htmlEscape(p.title)+'</a></li>').join("")+'</ul>'+
+ '<h2>Explore the regions</h2><ul>'+regions.map(r=>'<li><a href="/regions/'+htmlEscape(r.id)+'/">'+htmlEscape(r.name)+'</a></li>').join("")+'</ul>'+
+ '<h2>Step-by-step objective routes</h2><ul>'+objectiveRecords.map(o=>'<li><a href="'+o.route+'">'+htmlEscape(o.name)+' — '+htmlEscape(o.regionName)+'</a></li>').join("")+'</ul>'+
+ '<h2>Guided player workspaces</h2><ul>'+guides.map(g=>'<li><a href="/guides/'+g.id+'/">'+htmlEscape(g.title)+'</a></li>').join("")+'</ul></section>'},
  {route:"/help/",title:"Player Help Center",description:"Solve real player problems in Phantom Blade Zero with searchable boss, combat, navigation and quest guides.",main:'<h1>Player Help Center</h1><p>Find problem-solving walkthroughs.</p><ul>'+problems.map(p=>'<li><a href="/help/'+htmlEscape(p.id)+'/">'+htmlEscape(p.title)+'</a></li>').join("")+'</ul>'},
  ...problems.map(p=>({route:"/help/"+p.id+"/",title:p.title,description:p.summary,main:'<h1>'+htmlEscape(p.title)+'</h1><p>'+htmlEscape(p.summary)+'</p><p>'+htmlEscape(p.status)+'</p><h2>Steps</h2><ol>'+p.steps.map(s=>'<li><h3>'+htmlEscape(s.title)+'</h3><p>'+htmlEscape(s.body)+'</p></li>').join("")+'</ol>'})),
  ...Object.entries(sitePages).map(([id,p])=>({route:"/"+id+"/",title:p.title,description:p.description,main:p.html})),
@@ -64,7 +73,7 @@ for(const page of pages){
    (publisherId?'<meta name="google-adsense-account" content="'+publisherId+'">':'')+
    (adActivationRequested?'<script async crossorigin="anonymous" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='+publisherId+'"></script>':'')+
    '</head>');
- if(page.route!=="/")html=html.replace('<div id="app"></div>','<div id="app"><main id="main" class="prerender-fallback">'+page.main+'</main></div>');
+ html=html.replace('<div id="app"></div>','<div id="app"><main id="main" class="prerender-fallback">'+page.main+'</main></div>');
  const dest=page.route==="/"?path.join(output,"index.html"):path.join(output,page.route.slice(1),"index.html");
  await mkdir(path.dirname(dest),{recursive:true});
  await writeFile(dest,html,"utf8");
