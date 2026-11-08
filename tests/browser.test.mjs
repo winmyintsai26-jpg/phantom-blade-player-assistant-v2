@@ -6,6 +6,7 @@ import {problems,findProblems} from "../src/help-problems.js";
 import {regions} from "../src/regions.js";
 import {guides} from "../src/guides.js";
 import {objectiveRecords} from "../src/objectives.js";
+import {bosses} from "../src/bosses.js";
 import {renderStepImage} from "../src/step-media.js";
 
 const origin="http://127.0.0.1:4178";
@@ -27,6 +28,50 @@ try{
   await waitForServer();
   const browser=await chromium.launch({headless:true});
   try{
+    await test("Phase 4.1 browse full boss roster, filter and follow sourced strategy",async()=>{
+      const page=await browser.newPage();
+      const errors=[];page.on("pageerror",e=>errors.push(e.message));
+      await openPage(page,origin+"/bosses/");
+      assert.equal(await page.locator(".boss-card").count(),bosses.length);
+      await page.locator("#boss-query").fill("FROST YUCONG");
+      assert.equal(await page.locator(".boss-card").count(),1);
+      await page.locator("#boss-query").fill("");
+      await page.locator("#boss-region").selectOption("crimson-forest");
+      assert.equal(await page.locator(".boss-card").count(),bosses.filter(b=>b.region==="crimson-forest").length);
+      await page.locator("#boss-category").selectOption("optional");
+      assert.equal(await page.locator(".boss-card").count(),bosses.filter(b=>b.region==="crimson-forest"&&b.category==="optional").length);
+      await openPage(page,origin+"/bosses/jing-ye-the-outlaw/");
+      assert.match(await page.locator("h1").innerText(),/Jing Ye/);
+      await page.locator("#boss-phase").selectOption("Shield phase");
+      await page.locator("#boss-problem").selectOption("damage");
+      await page.locator("#boss-advice").click();
+      assert.match(await page.locator("#boss-advice-result").innerText(),/shield|damage/i);
+      await openPage(page,origin+"/bosses/peng-meng-the-axemaster/");
+      await page.locator("#boss-problem").selectOption("parry");
+      await page.locator("#boss-advice").click();
+      assert.match(await page.locator("#boss-advice-result").innerText(),/Strategy not yet documented/);
+      assert.equal(await page.locator('a[href="/guides/combat-diagnostics/"]').count()>=1,true);
+      await openPage(page,origin+"/regions/crimson-forest/");
+      assert.ok(await page.locator('a[href="/bosses/?region=crimson-forest"]').count()>0);
+      assert.deepEqual(errors,[]);
+      await page.close();
+    });
+    await test("Phase 4.1 boss status, tried tactics and feedback draft persist",async()=>{
+      const page=await browser.newPage();
+      await openPage(page,origin+"/bosses/jing-ye-the-outlaw/");
+      await page.locator("#boss-status").selectOption("in-progress");
+      await page.locator('[data-boss-attempt="parry"]').check();
+      await page.reload({waitUntil:"domcontentloaded"});
+      assert.equal(await page.locator("#boss-status").inputValue(),"in-progress");
+      assert.equal(await page.locator('[data-boss-attempt="parry"]').isChecked(),true);
+      assert.equal(await page.locator("#boss-feedback-send").isDisabled(),true);
+      await page.locator("#boss-feedback-result").selectOption("failed");
+      assert.equal(await page.locator("#boss-feedback-send").isEnabled(),true);
+      await page.locator("#boss-status").selectOption("completed");
+      await openPage(page,origin+"/progress/");
+      assert.ok((await page.locator(".progress-page").innerText()).includes("Boss progress by region"));
+      await page.close();
+    });
     await test("Phase 4 problem solver and item finder route real players to existing guides",async()=>{
       const page=await browser.newPage();
       const errors=[];page.on("pageerror",e=>errors.push(e.message));
@@ -330,7 +375,7 @@ try{
     });
     await test("mobile layout has no horizontal overflow on home and region",async()=>{
       const page=await browser.newPage({viewport:{width:375,height:812},isMobile:true,hasTouch:true});
-      for(const path of ["/","/solver/","/help/","/objectives/","/progress/","/contact/","/regions/weeping-creek/","/regions/village-of-lu/"]){
+      for(const path of ["/","/solver/","/bosses/","/bosses/jing-ye-the-outlaw/","/help/","/objectives/","/progress/","/contact/","/regions/weeping-creek/","/regions/village-of-lu/"]){
         await openPage(page,origin+path);
         const sizes=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth}));
         assert.ok(sizes.scroll<=sizes.client+2,path+" overflow "+JSON.stringify(sizes));
