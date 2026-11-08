@@ -16,11 +16,15 @@ export function renderProblemSolver(layout){
  target.addEventListener("change",()=>{
   const c=problemSolution(category.value,target.value);
   situation.innerHTML='<option value="">General guidance / not sure</option>'+(c?.choices||[]).map((x,i)=>`<option value="${i}">${esc(x.label)}</option>`).join("");
-  situation.disabled=!c?.choices?.length;show.disabled=!c;result.innerHTML="<p>Choose a situation when available, then show the next steps.</p>";
+  situation.disabled=!c?.choices?.length;show.disabled=!c;result.innerHTML=c?.kind==="boss"?'<p>This documented boss has a dedicated phase-aware assistant. Select “Show next steps” to open its fight profile.</p>':"<p>Choose a situation when available, then show the next steps.</p>";
  });
  show.addEventListener("click",()=>{
   const c=problemSolution(category.value,target.value,situation.value);
   if(!c){result.innerHTML='<p class="empty">No matching documented solution was found. <a href="/contact/">Report the missing route</a>.</p>';return}
+  if(c.kind==="boss"){
+    result.innerHTML='<article class="solver-result"><h2>'+esc(c.title)+'</h2><p>'+esc(c.region)+' · '+esc(c.status)+'</p><p>The boss profile contains documented phase choices, combat-problem troubleshooting, source references, and local fight progress. Missing tactics are labeled, not guessed.</p><a class="primary" href="'+esc(c.href)+'">Open Boss Fight Assistant ↗</a></article>';
+    return;
+  }
   const steps=c.focused?.steps||c.steps;
   result.innerHTML=`<article class="solver-result"><span class="eyebrow">SOURCE-RESEARCHED · NOT GAMEPLAY-TESTED</span><h2>${esc(c.title)}</h2><p>${esc(c.status)} · ${esc(c.region)}</p><h3>Before starting</h3>${c.requirements.length?`<ul>${c.requirements.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:"<p>Prerequisites have not been established in this record. Confirm your current quest and nearest Bell.</p>"}<h3>${c.focused?esc(c.focused.title):"What to do next"}</h3>${steps.length?`<ol>${steps.slice(0,5).map(x=>`<li>${esc(x)}</li>`).join("")}</ol>`:"<p>This region reference does not contain a complete route. Open the region page for its documented checkpoints rather than following invented instructions.</p>"}<h3>How to confirm</h3><p>${esc(c.confirmation||"No specific completion confirmation has been established for this reference. Check the in-game journal or inventory.")}</p>${c.recovery.length?`<h3>If that did not work</h3><ul>${c.recovery.slice(0,3).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}<a class="primary" href="${esc(c.href)}">Open the full ${c.kind==="region"?"region reference":"guide"} ↗</a><p class="note">This recommendation is based only on existing written references; it does not prove in-game completion.</p></article>`;
  });
