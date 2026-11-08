@@ -266,7 +266,7 @@
 
 /* Selected Logo 3 — preserve existing wordmark and dark visual language. */
 .header .brand{display:inline-flex;align-items:center;gap:13px;flex-shrink:0;min-width:0;line-height:1.2}
-.header .brand-logo{display:block;width:56px;height:56px;object-fit:contain;flex:none}
+.header .brand-logo{display:block;width:56px;height:56px;object-fit:contain;flex:none;padding:3px;border:1px solid #39434c;border-radius:10px;background:radial-gradient(circle at 50% 42%,#2b333b,#1d252c)}
 .header .brand-wordmark{display:block;min-width:0}
 .header .brand-wordmark small{margin-top:6px}
 @media(max-width:740px){.header .brand{gap:9px}.header .brand-logo{width:44px;height:44px}.header .brand-wordmark{font-size:12px;letter-spacing:.08em}.header .brand-wordmark small{font-size:8px;letter-spacing:.16em}}
