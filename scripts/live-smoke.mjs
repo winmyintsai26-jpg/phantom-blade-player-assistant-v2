@@ -5,7 +5,8 @@ import {regions} from "../src/regions.js";
 import {problems} from "../src/help-problems.js";
 import {objectiveRecords} from "../src/objectives.js";
 import {guides} from "../src/guides.js";
-const urls=["/","/solver/","/help/","/objectives/","/about/","/privacy/","/contact/","/progress/",
+import {bosses} from "../src/bosses.js";
+const urls=["/","/solver/","/bosses/",...bosses.map(b=>"/bosses/"+b.slug+"/"),"/help/","/objectives/","/about/","/privacy/","/contact/","/progress/",
  ...regions.map(r=>"/regions/"+r.id+"/"),
  ...problems.map(p=>"/help/"+p.id+"/"),
  ...objectiveRecords.map(o=>o.route),
