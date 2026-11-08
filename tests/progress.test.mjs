@@ -13,7 +13,7 @@ test("invalid, out-of-range and repeated ticks cannot enter progress",()=>{
 test("backup restores across devices without deleting existing ticks",()=>{
  const first=makeStorage({"pbz-v2-progress:items-weeping-creek":"[1,27]","pbz-v2-settings:show-spoilers":"true"});
  const backup=makeProgressBackup(first,"2026-11-07T00:00:00.000Z");
- assert.equal(backup.version,2);
+ assert.equal(backup.version,3);
  assert.deepEqual(backup.progress["items-weeping-creek"],[1,27]);
  const second=makeStorage({"pbz-v2-progress:items-weeping-creek":"[2]"});
  const count=restoreProgressBackup(second,backup);
@@ -30,6 +30,14 @@ test("objective confirmations export and import without overwriting completed re
  restoreProgressBackup(second,backup);
  assert.equal(second.getItem("pbz-v2-objective:weeping-creek:52"),"true");
  assert.equal(second.getItem("pbz-v2-objective:crimson-forest:14"),"true");
+});
+test("version-two backups remain compatible with the manual progress migration",()=>{
+ const original=makeStorage({"pbz-v2-objective:weeping-creek:52":"true"});
+ const exported=makeProgressBackup(original);
+ const old={app:exported.app,version:2,progress:exported.progress,objectives:exported.objectives,settings:exported.settings};
+ const restored=makeStorage();
+ restoreProgressBackup(restored,old);
+ assert.equal(restored.getItem("pbz-v2-objective:weeping-creek:52"),"true");
 });
 test("legacy V2 version-one backups remain importable",()=>{
  const legacy={app:"phantom-blade-player-assistant-v2",version:1,progress:{"items-weeping-creek":[27]},settings:{showSpoilers:false}};
