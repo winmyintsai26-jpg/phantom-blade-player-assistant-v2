@@ -260,3 +260,6 @@
  .header nav{column-gap:12px}
  .header nav a{font-size:11px}
 }
+
+.objective-image-fallback{display:block;border:1px dashed #576572;padding:14px;color:#c5cbd2;font-size:12px;line-height:1.4}
+.objective-image-fallback[hidden]{display:none}
