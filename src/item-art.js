@@ -28,6 +28,12 @@ const sourcedArt={
   "crimson-forest:66":{src:"https://pbz.gg/_ipx/w_200&f_webp&q_80/media/game/items/brass-chest-guard-384.webp",source:"https://pbz.gg/accessories/brass-chest-guard/"},
   "village-of-lu:2":{src:"https://pbz.gg/_ipx/w_195&f_webp&q_80/media/game/items/jewels-knot-195.webp",source:"https://pbz.gg/accessories/jewels-knot/"},
   "village-of-lu:22":{src:"https://pbz.gg/_ipx/w_200&f_webp&q_80/media/game/items/mothers-talisman-322.webp",source:"https://pbz.gg/accessories/mothers-talisman/"},
-  "village-of-lu:41":{src:"https://pbz.gg/_ipx/w_200&f_webp&q_80/media/game/items/arrowward-255.webp",source:"https://pbz.gg/accessories/arrowward/"}
+  "village-of-lu:41":{src:"https://pbz.gg/_ipx/w_200&f_webp&q_80/media/game/items/arrowward-255.webp",source:"https://pbz.gg/accessories/arrowward/"},
+  "pangzhen:6":{src:"https://pbz.gg/_ipx/w_200&f_webp&q_80/media/game/items/flameward-331.webp",source:"https://pbz.gg/accessories/flameward/"},
+  "pangzhen:15":{src:"https://pbz.gg/_ipx/w_200&f_webp&q_80/media/game/items/crimson-resolve-232.webp",source:"https://pbz.gg/accessories/crimson-resolve/"},
+  "meigu-lake:1":{src:"https://pbz.gg/_ipx/w_200&f_webp&q_80/media/game/items/battleforged-302.webp",source:"https://pbz.gg/accessories/battleforged/"},
+  "mountain-of-imprisonment:2":{src:"https://pbz.gg/_ipx/w_200&f_webp&q_80/media/game/items/baishan-writ-384.webp",source:"https://pbz.gg/accessories/baishan-writ/"},
+  "village-of-lu:73":{src:"https://pbz.gg/_ipx/w_200&f_webp&q_80/media/game/items/remnant-spark-cage-377.webp",source:"https://pbz.gg/accessories/remnant-spark-cage/"},
+  "village-of-lu:53":{src:"https://pbz.gg/_ipx/w_200&f_webp&q_80/media/game/items/agarwood-prayer-beads-384.webp",source:"https://pbz.gg/accessories/agarwood-prayer-beads/"}
 };
 export const collectibleArt=id=>sourcedArt[id]||null;
