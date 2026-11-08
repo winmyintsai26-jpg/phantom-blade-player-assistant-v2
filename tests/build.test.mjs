@@ -7,10 +7,11 @@ import {regions} from "../src/regions.js";
 import {guides} from "../src/guides.js";
 import {problems} from "../src/help-problems.js";
 import {objectiveRecords} from "../src/objectives.js";
+import {bosses} from "../src/bosses.js";
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..","dist");
 const read=f=>readFile(path.join(root,f),"utf8");
 const manifest=JSON.parse(await read("build-manifest.json"));
-const expected=["/","/solver/","/help/","/objectives/",...objectiveRecords.map(o=>o.route),"/about/","/privacy/","/contact/","/progress/",...regions.map(r=>"/regions/"+r.id+"/"),...guides.map(g=>"/guides/"+g.id+"/"),...problems.map(p=>"/help/"+p.id+"/")];
+const expected=["/","/solver/","/bosses/",...bosses.map(x=>"/bosses/"+x.slug+"/"),"/help/","/objectives/",...objectiveRecords.map(o=>o.route),"/about/","/privacy/","/contact/","/progress/",...regions.map(r=>"/regions/"+r.id+"/"),...guides.map(g=>"/guides/"+g.id+"/"),...problems.map(p=>"/help/"+p.id+"/")];
 test("all generated routes have unique titles, descriptions and canonical",async()=>{
  assert.equal(new Set(expected).size,expected.length);
  assert.deepEqual(new Set(manifest.routes),new Set(expected));
@@ -22,7 +23,7 @@ test("all generated routes have unique titles, descriptions and canonical",async
   assert.ok(!titles.has(title),"Duplicate title: "+title);titles.add(title);
   assert.match(html,/<meta name="description" content="[^"]{30,160}">/);
   assert.ok(html.includes('<link rel="canonical" href="'+manifest.origin+route+'">'),route);
-  assert.ok(html.includes('name="robots" content="'+(manifest.indexingEnabled?"index,follow":"noindex,nofollow")+'"'),route);
+  assert.ok(html.includes('name="robots" content="'+(manifest.indexingEnabled&&(!route.startsWith("/bosses/")||route==="/bosses/"||bosses.find(x=>"/bosses/"+x.slug+"/"===route)?.hasStrategy)?"index,follow":"noindex,nofollow")+'"'),route);
   assert.ok(html.includes('/assets/'),route+" missing compiled assets");
  }
 });
@@ -69,8 +70,9 @@ test("sitemap contains valid XML header and every canonical URL",async()=>{
  assert.ok(xml.endsWith('</urlset>\n'));
  assert.ok(!xml.includes("\\n"),"literal slash-n in XML");
  const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
- assert.deepEqual(new Set(urls),new Set(expected.map(p=>manifest.origin+p)));
- assert.equal(urls.length,expected.length);
+ const eligible=expected.filter(route=>!route.startsWith("/bosses/")||route==="/bosses/"||bosses.some(x=>x.hasStrategy&&"/bosses/"+x.slug+"/"===route));
+ assert.deepEqual(new Set(urls),new Set(eligible.map(p=>manifest.origin+p)));
+ assert.equal(urls.length,eligible.length);
 });
 test("preview never permits indexing without editorial approval",async()=>{
  const robots=await read("robots.txt");
