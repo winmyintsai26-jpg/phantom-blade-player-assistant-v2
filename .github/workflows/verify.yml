@@ -3,6 +3,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -26,3 +27,62 @@ jobs:
         if: ${{ always() }}
         run: timeout --signal=SIGTERM 90s node scripts/live-browser-smoke.mjs
         continue-on-error: true
+  deploy:
+    name: Deploy Cloudflare Worker after passing verification
+    needs: verify
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check Cloudflare deployment secrets
+        id: credentials
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$CF_TOKEN" ] && [ -n "$CF_ACCOUNT" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+            echo "Cloudflare credentials configured."
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Deployment not attempted: add CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID as repository secrets."
+          fi
+      - name: Build assets with revision and editorial gates
+        if: steps.credentials.outputs.ready == 'true'
+        env:
+          V2_BUILD_SHA: ${{ github.sha }}
+          V2_SITE_ORIGIN: ${{ vars.V2_SITE_ORIGIN }}
+          V2_EDITORIAL_APPROVED: ${{ vars.V2_EDITORIAL_APPROVED }}
+          V2_INDEXING_ENABLED: ${{ vars.V2_INDEXING_ENABLED }}
+          V2_ADSENSE_PUBLISHER_ID: ${{ vars.V2_ADSENSE_PUBLISHER_ID }}
+          V2_ADSENSE_SITE_APPROVED: ${{ vars.V2_ADSENSE_SITE_APPROVED }}
+          V2_ADS_ENABLED: ${{ vars.V2_ADS_ENABLED }}
+        run: |
+          npm install --no-audit --no-fund
+          npm run check
+          npm run test:build
+      - name: Deploy V2 to Cloudflare Workers
+        if: steps.credentials.outputs.ready == 'true'
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
+      - name: Verify live Cloudflare commit SHA
+        if: steps.credentials.outputs.ready == 'true'
+        run: |
+          for attempt in 1 2 3 4 5; do
+            if node scripts/live-smoke.mjs; then
+              echo "Deployed Cloudflare revision verified."
+              exit 0
+            fi
+            echo "Waiting for deployment propagation ($attempt/5)"
+            sleep 6
+          done
+          exit 1
