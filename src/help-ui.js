@@ -34,7 +34,7 @@ export function renderProblem(layout,id){
  }));
  document.getElementById("send-feedback").addEventListener("click",()=>{
    if(!outcome)return;
-   const url=playerIssueUrl({title:p.title,slug:p.id,diagnosis,outcome,description:detail.value,platform:document.getElementById("feedback-platform").value});
+   const url=playerIssueUrl({title:p.title,slug:p.id,diagnosis,outcome,description:detail.value,platform:document.getElementById("feedback-platform").value,siteOrigin:window.location.origin});
    window.open(url,"_blank","noopener,noreferrer");
    document.getElementById("feedback-help").textContent="A GitHub login is required to submit. Review and send the prefilled issue in GitHub; this page has not submitted it.";
  });
