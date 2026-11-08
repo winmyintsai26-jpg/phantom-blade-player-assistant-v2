@@ -8,6 +8,7 @@ import {guides} from "../src/guides.js";
 import {problems} from "../src/help-problems.js";
 import {objectiveRecords} from "../src/objectives.js";
 import {bosses} from "../src/bosses.js";
+import {getBossStrategy} from "../src/boss-strategies.js";
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..","dist");
 const read=f=>readFile(path.join(root,f),"utf8");
 const manifest=JSON.parse(await read("build-manifest.json"));
@@ -23,7 +24,7 @@ test("all generated routes have unique titles, descriptions and canonical",async
   assert.ok(!titles.has(title),"Duplicate title: "+title);titles.add(title);
   assert.match(html,/<meta name="description" content="[^"]{30,160}">/);
   assert.ok(html.includes('<link rel="canonical" href="'+manifest.origin+route+'">'),route);
-  assert.ok(html.includes('name="robots" content="'+(manifest.indexingEnabled&&(!route.startsWith("/bosses/")||route==="/bosses/"||bosses.find(x=>"/bosses/"+x.slug+"/"===route)?.hasStrategy)?"index,follow":"noindex,nofollow")+'"'),route);
+  assert.ok(html.includes('name="robots" content="'+(manifest.indexingEnabled&&(!route.startsWith("/bosses/")||route==="/bosses/"||Boolean(getBossStrategy(bosses.find(x=>"/bosses/"+x.slug+"/"===route)?.slug)?.attacks?.length))?"index,follow":"noindex,nofollow")+'"'),route);
   assert.ok(html.includes('/assets/'),route+" missing compiled assets");
  }
 });
@@ -70,7 +71,7 @@ test("sitemap contains valid XML header and every canonical URL",async()=>{
  assert.ok(xml.endsWith('</urlset>\n'));
  assert.ok(!xml.includes("\\n"),"literal slash-n in XML");
  const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
- const eligible=expected.filter(route=>!route.startsWith("/bosses/")||route==="/bosses/"||bosses.some(x=>x.hasStrategy&&"/bosses/"+x.slug+"/"===route));
+ const eligible=expected.filter(route=>!route.startsWith("/bosses/")||route==="/bosses/"||bosses.some(x=>getBossStrategy(x.slug)?.attacks?.length&&"/bosses/"+x.slug+"/"===route));
  assert.deepEqual(new Set(urls),new Set(eligible.map(p=>manifest.origin+p)));
  assert.equal(urls.length,eligible.length);
 });
