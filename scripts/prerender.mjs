@@ -1,6 +1,7 @@
 import {readFile,writeFile,mkdir} from "node:fs/promises";
 import path from "node:path";
 import {fileURLToPath} from "node:url";
+import {execFileSync} from "node:child_process";
 import {regions} from "../src/regions.js";
 import {guides} from "../src/guides.js";
 import {regionCollectibles} from "../src/collectibles.js";
@@ -9,6 +10,7 @@ import {sitePages} from "../src/site-pages.js";
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..");
 const output=path.join(root,"dist");
+const commitSha=process.env.V2_BUILD_SHA||process.env.GITHUB_SHA||(()=>{try{return execFileSync("git",["rev-parse","HEAD"],{cwd:root,encoding:"utf8",stdio:["ignore","pipe","ignore"]}).trim()}catch{return null}})();
 const template=await readFile(path.join(output,"index.html"),"utf8");
 const xmlEscape=x=>String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[c]));
 const htmlEscape=x=>String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -58,5 +60,5 @@ await writeFile(path.join(output,"sitemap.xml"),sitemap,"utf8");
 if(publisherId)await writeFile(path.join(output,"ads.txt"),"google.com, "+publisherId.replace(/^ca-/,"")+", DIRECT, f08c47fec0942fa0\n","utf8");
 const robots=publish?["User-agent: *","Allow: /","Sitemap: "+origin+"/sitemap.xml",""]:["User-agent: *","Disallow: /","Sitemap: "+origin+"/sitemap.xml",""];
 await writeFile(path.join(output,"robots.txt"),robots.join("\n"),"utf8");
-await writeFile(path.join(output,"build-manifest.json"),JSON.stringify({origin,commitSha:process.env.V2_BUILD_SHA||process.env.GITHUB_SHA||null,indexingEnabled:publish,editorialApproved:approved,adsenseConfigured:Boolean(publisherId),adsEnabled:adActivationRequested,routes:[...unique]},null,2)+"\n","utf8");
+await writeFile(path.join(output,"build-manifest.json"),JSON.stringify({origin,commitSha,indexingEnabled:publish,editorialApproved:approved,adsenseConfigured:Boolean(publisherId),adsEnabled:adActivationRequested,routes:[...unique]},null,2)+"\n","utf8");
 console.log("Pre-rendered "+pages.length+" routes. Indexing: "+(publish?"ON (editorial approval)":"OFF (preview)")+".");
