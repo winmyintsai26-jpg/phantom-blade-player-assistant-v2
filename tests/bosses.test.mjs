@@ -41,7 +41,7 @@ test("phase and issue selection shows only supported fight evidence, not fabrica
  const missing=bossAdvice("peng-meng-the-axemaster","", "parry");
  assert.equal(missing.kind,"missing");
  assert.equal(missing.generalHref,"/guides/combat-diagnostics/");
- const unrelated=bossAdvice("jing-ye-the-outlaw","Mounted phase","healing");
+ const unrelated=bossAdvice("jing-ye-the-outlaw","Shield phase","healing");
  assert.equal(unrelated.kind,"missing");
  assert.equal(bossAdvice("unknown-boss"),null);
  assert.ok(combatProblems.some(x=>x.id==="preparation"));
