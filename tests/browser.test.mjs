@@ -40,6 +40,11 @@ try{
       assert.equal(await page.locator(".boss-card").count(),bosses.filter(b=>b.region==="crimson-forest").length);
       await page.locator("#boss-category").selectOption("optional");
       assert.equal(await page.locator(".boss-card").count(),bosses.filter(b=>b.region==="crimson-forest"&&b.category==="optional").length);
+      await openPage(page,origin+"/solver/");
+      await page.locator("#solver-category").selectOption("boss");
+      await page.locator("#solver-target").selectOption("boss:wan-jun-the-coppermaul");
+      await page.locator("#solver-show").click();
+      assert.equal(await page.locator('#solver-result a[href="/bosses/wan-jun-the-coppermaul/"]').count(),1);
       await openPage(page,origin+"/bosses/jing-ye-the-outlaw/");
       assert.match(await page.locator("h1").innerText(),/Jing Ye/);
       await page.locator("#boss-phase").selectOption("Shield phase");
