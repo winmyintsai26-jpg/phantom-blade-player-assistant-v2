@@ -6,7 +6,7 @@ const browser=await chromium.launch({headless:true});
 try{
  const page=await browser.newPage({viewport:{width:1366,height:768}});
  page.on("pageerror",e=>{console.log("JS ERROR: "+e.message);fails++});
- for(const route of ["/","/help/","/help/jing-ye-dismounted/","/help/sha-chi-tower-base/","/regions/weeping-creek/"]){
+ for(const route of ["/","/about/","/privacy/","/help/","/help/jing-ye-dismounted/","/help/sha-chi-tower-base/","/regions/weeping-creek/"]){
   try{
    const r=await page.goto(origin+route,{waitUntil:"domcontentloaded",timeout:20000});
    const h1=(await page.locator("h1").first().textContent())?.trim()||"";
