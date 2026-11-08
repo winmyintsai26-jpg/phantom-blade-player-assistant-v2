@@ -1,10 +1,12 @@
 import {regions} from "./regions.js";
 import {objectiveRecords} from "./objectives.js";
+import {bosses} from "./bosses.js";
 export const STATUS_PREFIX="pbz-v2-status:";
 export const progressStatuses=["not-started","in-progress","completed"];
 export const supportedStatusIds=[
  ...regions.flatMap(r=>r.checkpoints.map((_,i)=>"checkpoint:"+r.id+":"+i)),
- ...objectiveRecords.map(o=>"objective:"+o.id)
+ ...objectiveRecords.map(o=>"objective:"+o.id),
+ ...bosses.map(b=>"boss:"+b.slug)
 ];
 const supported=new Set(supportedStatusIds);
 export const validStatusId=id=>supported.has(id);
