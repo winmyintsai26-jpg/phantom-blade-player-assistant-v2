@@ -112,6 +112,7 @@ try{
       const errors=[];page.on("pageerror",e=>errors.push(e.message));
       await openPage(page,origin+"/help/");
       assert.equal(await page.locator(".help-card").count(),problems.length);
+      assert.deepEqual(await page.locator(".help-card").evaluateAll(links=>links.map(a=>new URL(a.href).pathname)),problems.map(p=>"/help/"+p.id+"/"));
       await page.locator("#problem-search").fill("Jing Ye");
       assert.equal(await page.locator(".help-card").count(),1);
       await page.locator("#problem-search").fill("");
@@ -134,6 +135,7 @@ try{
         const response=await openPage(page,origin+"/help/"+slug+"/");
         assert.equal(response.status(),200,slug);
         assert.equal(await page.locator(".help-article h1").count(),1,slug);
+        assert.equal(await page.locator(".help-article h1").innerText(),problems.find(p=>p.id===slug).title,slug+" title");
         assert.ok(await page.locator(".help-steps li").count()>=3,slug);
         assert.ok(await page.locator(".diagnosis-option").count()>=2,slug);
         await page.reload();
