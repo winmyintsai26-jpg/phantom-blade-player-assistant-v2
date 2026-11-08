@@ -11,7 +11,7 @@
     "check": "npm run test && npm run build",
     "test:browser": "node --test tests/browser.test.mjs",
     "test:build": "node --test tests/build.test.mjs",
-    "prebuild": "node scripts/sync-item-art.mjs"
+    "sync:images": "node scripts/sync-item-art.mjs"
   },
   "devDependencies": {
     "vite": "^7.1.0",
