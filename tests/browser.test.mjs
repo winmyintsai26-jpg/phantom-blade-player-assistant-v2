@@ -26,6 +26,57 @@ try{
   await waitForServer();
   const browser=await chromium.launch({headless:true});
   try{
+    await test("Phase 4 problem solver and item finder route real players to existing guides",async()=>{
+      const page=await browser.newPage();
+      const errors=[];page.on("pageerror",e=>errors.push(e.message));
+      await openPage(page,origin+"/");
+      assert.equal(await page.locator('a[href="/solver/"]').count()>0,true);
+      await openPage(page,origin+"/solver/");
+      assert.match(await page.locator("h1").innerText(),/Solve My Problem/);
+      await page.locator("#solver-category").selectOption("boss");
+      await page.locator("#solver-target").selectOption("problem:jing-ye-dismounted");
+      await page.locator("#solver-situation").selectOption("1");
+      await page.locator("#solver-show").click();
+      assert.match(await page.locator("#solver-result").innerText(),/Jing Ye/);
+      assert.equal(await page.locator('#solver-result a[href="/help/jing-ye-dismounted/"]').count(),1);
+      await page.locator("#solver-reset").click();
+      assert.equal(await page.locator("#solver-target").isDisabled(),true);
+      await page.locator("#solver-category").selectOption("navigation");
+      await page.locator("#solver-target").selectOption("region:mirage-estate");
+      await page.locator("#solver-show").click();
+      assert.match(await page.locator("#solver-result").innerText(),/complete route/i);
+      await openPage(page,origin+"/objectives/");
+      await page.locator("#objective-search").fill("pIgEoN fEeD");
+      assert.ok(await page.locator(".objective-card").count()>=1);
+      await page.locator("#objective-search").fill("");
+      await page.locator("#item-region").selectOption("weeping-creek");
+      await page.locator("#item-type").selectOption("Bell");
+      assert.ok(await page.locator(".objective-card").count()>=1);
+      assert.equal(await page.locator(".objective-card").first().innerText().then(x=>x.includes("Starting Bell not established")),true);
+      await page.locator("#objective-search").fill("totally unknown item");
+      assert.match(await page.locator("#objective-results").innerText(),/No matching record/);
+      assert.deepEqual(errors,[]);
+      await page.close();
+    });
+    await test("Phase 4 manual states and missable warnings remain local and exportable",async()=>{
+      const page=await browser.newPage();
+      await openPage(page,origin+"/progress/");
+      assert.equal(await page.locator("#progress-region").count(),1);
+      await page.locator("#progress-region").selectOption("weeping-creek");
+      const status=page.locator('[data-progress-state="checkpoint:weeping-creek:0"]');
+      assert.equal(await status.inputValue(),"not-started");
+      assert.ok(await page.locator("#missable-outstanding li").count()>0);
+      await status.selectOption("in-progress");
+      await page.reload({waitUntil:"domcontentloaded"});
+      assert.equal(await page.locator('[data-progress-state="checkpoint:weeping-creek:0"]').inputValue(),"in-progress");
+      await page.locator('[data-progress-state="checkpoint:weeping-creek:0"]').selectOption("completed");
+      assert.equal(await page.locator('[data-progress-state="checkpoint:weeping-creek:0"]').inputValue(),"completed");
+      assert.equal(await page.evaluate(()=>localStorage.getItem("pbz-v2-status:checkpoint:weeping-creek:0")),"completed");
+      await page.locator('[data-progress-state="objective:weeping-creek:52"]').selectOption("completed");
+      await openPage(page,origin+"/objectives/weeping-creek/52/");
+      assert.equal(await page.locator("#objective-completed").isChecked(),true);
+      await page.close();
+    });
     await test("curated objective search, deep links and local completion check work",async()=>{
       const page=await browser.newPage();
       const errors=[];page.on("pageerror",e=>errors.push(e.message));
@@ -265,7 +316,7 @@ try{
     });
     await test("mobile layout has no horizontal overflow on home and region",async()=>{
       const page=await browser.newPage({viewport:{width:375,height:812},isMobile:true,hasTouch:true});
-      for(const path of ["/","/help/","/objectives/","/contact/","/regions/weeping-creek/","/regions/village-of-lu/"]){
+      for(const path of ["/","/solver/","/help/","/objectives/","/progress/","/contact/","/regions/weeping-creek/","/regions/village-of-lu/"]){
         await openPage(page,origin+path);
         const sizes=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth}));
         assert.ok(sizes.scroll<=sizes.client+2,path+" overflow "+JSON.stringify(sizes));
