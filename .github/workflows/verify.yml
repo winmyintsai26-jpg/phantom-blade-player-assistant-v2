@@ -30,6 +30,10 @@ jobs:
         if: ${{ always() }}
         run: timeout --signal=SIGTERM 90s node scripts/live-browser-smoke.mjs
         continue-on-error: true
+      - name: Audit production SEO directives and sitemap (read-only)
+        if: ${{ always() }}
+        run: node scripts/seo-live-audit.mjs
+        continue-on-error: true
       - name: Verify custom production domain revision (read-only)
         if: ${{ success() }}
         env:
