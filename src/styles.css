@@ -242,3 +242,21 @@
 .objective-report button{padding:12px 18px;color:#15110d;background:#d5aa72;border:0;font-weight:700;cursor:pointer}
 .objective-report button:disabled{opacity:.5;cursor:not-allowed}
 .objective-report p[role=status]{font-size:12px;margin:12px 0 0}
+
+
+/* Phase 3: keep main navigation reachable on narrow screens without horizontal overflow. */
+.header{min-height:90px;height:auto;flex-wrap:wrap;padding-top:15px;padding-bottom:15px}
+.header nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:12px 19px}
+.header nav a{white-space:nowrap}
+.footer-links{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+@media(max-width:740px){
+ .header{align-items:flex-start;gap:13px;min-height:78px}
+ .header nav{width:100%;justify-content:flex-start;gap:10px 18px}
+ .header nav a{font-size:12px;padding:3px 0}
+ .footer{flex-wrap:wrap}
+ .footer-links{width:100%}
+}
+@media(max-width:390px){
+ .header nav{column-gap:12px}
+ .header nav a{font-size:11px}
+}
