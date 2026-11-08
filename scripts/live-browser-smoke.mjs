@@ -4,7 +4,7 @@ import {regions} from "../src/regions.js";
 import {problems,findProblems} from "../src/help-problems.js";
 import {objectiveRecords} from "../src/objectives.js";
 const origin=(process.env.V2_SITE_ORIGIN||"https://phantom-blade-player-assistant-v2.winmyintsai26.workers.dev").replace(/\/$/,"");
-const routes=["/","/help/","/objectives/","/about/","/privacy/","/contact/","/progress/",
+const routes=["/","/solver/","/help/","/objectives/","/about/","/privacy/","/contact/","/progress/",
  ...regions.map(r=>"/regions/"+r.id+"/"),
  ...problems.map(p=>"/help/"+p.id+"/"),...objectiveRecords.map(o=>o.route)];
 let failures=0,warnings=0;
@@ -37,6 +37,13 @@ try{
    }catch(error){fail(route+" "+String(error))}
   }
   try{
+   await page.goto(origin+"/solver/",{waitUntil:"domcontentloaded"});
+   await page.locator("#solver-category").selectOption("boss");
+   await page.locator("#solver-target").selectOption("problem:jing-ye-dismounted");
+   await page.locator("#solver-show").click();
+   if(await page.locator('#solver-result a[href="/help/jing-ye-dismounted/"]').count()!==1)fail("Interactive problem solver did not link to existing guide");
+   await page.goto(origin+"/progress/",{waitUntil:"domcontentloaded"});
+   if(await page.locator("#progress-region").count()!==1)fail("Manual progress selector missing");
    await page.goto(origin+"/help/",{waitUntil:"domcontentloaded"});
    if(await page.locator(".help-card").count()!==problems.length)fail("Help card count mismatch");
    await page.locator("#problem-search").fill("Jing Ye");
