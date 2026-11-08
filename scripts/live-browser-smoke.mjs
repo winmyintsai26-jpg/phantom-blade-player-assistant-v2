@@ -3,8 +3,9 @@ import {chromium} from "playwright";
 import {regions} from "../src/regions.js";
 import {problems,findProblems} from "../src/help-problems.js";
 import {objectiveRecords} from "../src/objectives.js";
+import {bosses} from "../src/bosses.js";
 const origin=(process.env.V2_SITE_ORIGIN||"https://phantom-blade-player-assistant-v2.winmyintsai26.workers.dev").replace(/\/$/,"");
-const routes=["/","/solver/","/help/","/objectives/","/about/","/privacy/","/contact/","/progress/",
+const routes=["/","/solver/","/bosses/",...bosses.map(b=>"/bosses/"+b.slug+"/"),"/help/","/objectives/","/about/","/privacy/","/contact/","/progress/",
  ...regions.map(r=>"/regions/"+r.id+"/"),
  ...problems.map(p=>"/help/"+p.id+"/"),...objectiveRecords.map(o=>o.route)];
 let failures=0,warnings=0;
@@ -37,6 +38,14 @@ try{
    }catch(error){fail(route+" "+String(error))}
   }
   try{
+   await page.goto(origin+"/bosses/",{waitUntil:"domcontentloaded"});
+   if(await page.locator(".boss-card").count()!==bosses.length)fail("Boss directory roster count");
+   await page.locator("#boss-query").fill("jing ye");
+   if(await page.locator(".boss-card").count()<1)fail("Boss name search");
+   await page.goto(origin+"/bosses/jing-ye-the-outlaw/",{waitUntil:"domcontentloaded"});
+   await page.locator("#boss-problem").selectOption("damage");
+   await page.locator("#boss-advice").click();
+   if(await page.locator("#boss-advice-result").count()!==1)fail("Boss phase assistant missing");
    await page.goto(origin+"/solver/",{waitUntil:"domcontentloaded"});
    await page.locator("#solver-category").selectOption("boss");
    await page.locator("#solver-target").selectOption("problem:jing-ye-dismounted");
