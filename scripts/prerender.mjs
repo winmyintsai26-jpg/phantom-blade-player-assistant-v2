@@ -8,6 +8,7 @@ import {regionCollectibles} from "../src/collectibles.js";
 import {problems} from "../src/help-problems.js";
 import {objectiveRecords} from "../src/objectives.js";
 import {bosses} from "../src/bosses.js";
+import {getBossStrategy} from "../src/boss-strategies.js";
 import {sitePages} from "../src/site-pages.js";
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..");
@@ -47,7 +48,24 @@ const pages=[
  '<h2>Guided player workspaces</h2><ul>'+guides.map(g=>'<li><a href="/guides/'+g.id+'/">'+htmlEscape(g.title)+'</a></li>').join("")+'</ul></section>'},
  {route:"/solver/",title:"Solve My Problem",description:"Find a Phantom Blade Zero player solution for a boss, quest, item or navigation problem with an evidence-labeled guide.",main:'<h1>Solve My Problem</h1><p>Select your problem category and an existing documented situation to find a relevant route. Unknown solutions are not guessed.</p><ul>'+problems.map(x=>'<li><a href="/help/'+htmlEscape(x.id)+'/">'+htmlEscape(x.title)+'</a></li>').join("")+'</ul><p><a href="/objectives/">Search the item finder</a></p>'},
  {route:"/bosses/",title:"Phantom Blade Zero Boss Directory",description:"Browse documented Phantom Blade Zero boss fights across all regions, with sources, alternate names, encounter status and links to available strategies.",main:'<h1>Phantom Blade Zero Boss Directory</h1><p>Browse '+bosses.length+' source-indexed fight groupings across the prologue and every region. Different sources count health bars, phases and repeat encounters differently. A roster listing does not mean a verified combat strategy exists.</p><ul>'+bosses.map(b=>'<li><a href="/bosses/'+b.slug+'/">'+htmlEscape(b.name)+'</a> — '+htmlEscape(b.regionName)+'</li>').join("")+'</ul>'},
- ...bosses.map(b=>({route:"/bosses/"+b.slug+"/",title:b.name+" — Boss Evidence and Strategy",description:"Boss profile for "+b.name+" in "+b.regionName+": location evidence, alternate names and "+(b.hasStrategy?"existing source-researched troubleshooting.":"current combat strategy research status."),eligibleForSitemap:b.hasStrategy,main:'<article><h1>'+htmlEscape(b.name)+'</h1><p>'+htmlEscape(b.regionName)+' · '+htmlEscape(b.family)+'</p><p>Published encounter index, not independently replayed in-game.</p><h2>Starting location</h2><p>'+htmlEscape(b.location||"Exact starting Bell and arena not yet established.")+'</p><h2>Other published labels</h2><p>'+htmlEscape(b.aliases.length?b.aliases.join("; "):"No alternate encounter labels recorded.")+'</p><h2>Combat strategy</h2><p>'+(b.hasStrategy?'Related, source-researched guidance is available in the <a href="/help/'+b.helpId+'/">existing boss troubleshooting guide</a>.':'Strategy not yet documented. Specific parry timing, attack tells and healing windows have not been independently verified.')+'</p><h2>Research sources</h2><ul>'+b.sources.map(x=>'<li><a href="'+htmlEscape(x.url)+'">'+htmlEscape(x.name)+'</a></li>').join("")+'</ul><p><a href="/bosses/">Return to Boss Directory</a></p></article>'})),
+ ...bosses.map(b=>{
+  const strategy=getBossStrategy(b.slug);
+  const evidence=strategy?.sources||[];
+  const escList=items=>'<ol>'+items.map(x=>'<li>'+htmlEscape(x.instruction||x.response||x)+'</li>').join("")+'</ol>';
+  const detail='<article><h1>'+htmlEscape(b.name)+'</h1><p>'+htmlEscape(b.regionName)+' · '+htmlEscape(b.family)+'</p><p>Published source research — not independently game-tested.</p>'+
+  '<h2>Starting location and Bell</h2><p>'+htmlEscape(strategy?.bell||b.location||"Exact Bell not established")+'</p>'+
+  (strategy?.route?.length?'<h3>How to reach the arena</h3>'+escList(strategy.route):'<p>Detailed Bell-to-arena steps not yet documented.</p>')+
+  (strategy?.preparation?.length?'<h2>Preparation</h2><ul>'+strategy.preparation.map(x=>'<li>'+htmlEscape(x)+'</li>').join("")+'</ul>':"")+
+  (strategy?.attacks?.length?'<h2>Attack cues and recommended responses</h2>'+strategy.attacks.map(a=>'<section><h3>'+htmlEscape(a.cue)+'</h3><p>Recommended response: '+htmlEscape(a.response)+'</p><p>Avoid: '+htmlEscape(a.avoid)+'</p></section>').join(""):'<h2>Combat strategy</h2><p>Strategy not yet documented. See original sources and report missing information.</p>')+
+  (strategy?.confirmation?'<h2>Confirming completion</h2><p>'+htmlEscape(strategy.confirmation)+'</p>':"")+
+  (strategy?.patchReview?'<h2>Version warning</h2><p>'+htmlEscape(strategy.patchReview.note)+'</p>':"")+
+  '<h2>Sources</h2><ul>'+(evidence.length?evidence:b.sources).map(x=>'<li><a href="'+htmlEscape(x.url)+'">'+htmlEscape(x.url)+'</a></li>').join("")+'</ul>'+
+  '<p><a href="/bosses/">Browse all bosses</a></p></article>';
+  return {route:"/bosses/"+b.slug+"/",title:b.name+" — Boss Evidence and Strategy",description:strategy?
+   "Source-researched "+b.name+" boss guide: starting Bell, attack cues, defensive responses and route evidence. Not independently game-tested.":
+   "Research status for "+b.name+" in "+b.regionName+". Published boss roster and unresolved strategy evidence.",
+   eligibleForSitemap:Boolean(strategy?.attacks?.length),main:detail};
+ }),
  {route:"/help/",title:"Player Help Center",description:"Solve real player problems in Phantom Blade Zero with searchable boss, combat, navigation and quest guides.",main:'<h1>Player Help Center</h1><p>Find problem-solving walkthroughs.</p><ul>'+problems.map(p=>'<li><a href="/help/'+htmlEscape(p.id)+'/">'+htmlEscape(p.title)+'</a></li>').join("")+'</ul>'},
  ...problems.map(p=>({route:"/help/"+p.id+"/",title:p.title,description:p.summary,main:'<h1>'+htmlEscape(p.title)+'</h1><p>'+htmlEscape(p.summary)+'</p><p>'+htmlEscape(p.status)+'</p><h2>Steps</h2><ol>'+p.steps.map(s=>'<li><h3>'+htmlEscape(s.title)+'</h3><p>'+htmlEscape(s.body)+'</p></li>').join("")+'</ol>'})),
  ...Object.entries(sitePages).map(([id,p])=>({route:"/"+id+"/",title:p.title,description:p.description,main:p.html})),
