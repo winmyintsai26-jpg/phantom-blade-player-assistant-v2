@@ -4,6 +4,7 @@
 // https://allthings.how/phantom-blade-zero-bosses/ (74 bar/title entries),
 // https://www.powerpyx.com/phantom-blade-zero-trophy-guide-roadmap/ (selected main/optional claims).
 import {problems} from "./help-problems.js";
+import {externalBossGuides} from "./boss-external-guides.js";
 
 export const bossSources={
  pbz:{name:"pbz.gg — regional boss index",url:"https://pbz.gg/bosses/"},
@@ -113,16 +114,32 @@ const locationDetail={
  "blizzard-blademaster":"Phantom Illusionist Ruins",
  "huangxing-the-kunlun-renegade":"Near the mountain summit"
 };
+// Named health-bar stages follow the external roster's explicit alternate-stage claims.
+// These labels help select an encounter state; they do not supply new tactical instructions.
+const barPhases={
+ "the-hunt-sixfold-scythe":["Hunter of the Order","Sixfold Scythe"],
+ "bai-chilian-lady-of-the-twin-serpents":["Lady of the Twin Serpents","Sacrificial Serpent"],
+ "mu-xiaokui-young-mistress-of-the-order":["Young Mistress","Queen of Iron and Jade"],
+ "blaze-shadow-warden-captain":["Shadow Warden Captain","Phosphor Consciousness"],
+ "chang-hong-the-thunder-spear":["Thunder Spear","Thunder Lancer"],
+ "flame-the-mask-bound-lion-dance-grandmaster":["Mask-Bound Grandmaster","Final Dance"],
+ "chief-disciple-of-the-seven-stars-formation":["Seven-Stars Formation","Sword of Despair"],
+ "huangxing-the-kunlun-renegade":["Kunlun Renegade","Whirling Executioner"],
+ "lei-dang-the-tiger-cannon":["Tiger Cannon","One-Armed Tiger"],
+ "the-crusher-and-the-saw":["Crusher and the Saw","Crusher, Earthshattering Form"],
+ "meng-hua-the-merciful-lady-of-the-blossom-veil":["Leng Tu, Herald of the Veil","Meng Hua, Merciful Lady"],
+ "zuo-shang-the-true-long":["Order's Shadow Sovereign","True Lóng"]
+};
 export const bosses=roster.flatMap(([region,records])=>records.map(([name,family,aliases])=>{
  const slug=normalize(name),helpId=specificHelp[slug],help=problems.find(p=>p.id===helpId)||null;
- return {id:slug,slug,name,aliases,region,regionName:regionLabels[region],family,category:knownMain.has(slug)?"main":knownOptional.has(slug)?"optional":"undetermined",location:locationDetail[slug]||null,phases:help&&help.id==="jing-ye-dismounted"?["Mounted phase","Shield phase","Sword phase"]:[],helpId:help?.id||null,hasStrategy:Boolean(help),sources:[bossSources.pbz,bossSources.all,...(knownMain.has(slug)||knownOptional.has(slug)?[bossSources.power]:[])],verification:"Published index · not independently gameplay-tested"};
+ return {id:slug,slug,name,aliases,region,regionName:regionLabels[region],family,category:knownMain.has(slug)?"main":knownOptional.has(slug)?"optional":"undetermined",location:locationDetail[slug]||null,phases:help&&help.id==="jing-ye-dismounted"?["Mounted phase","Shield phase","Sword phase"]:(barPhases[slug]||[]),phaseNote:slug==="jing-ye-the-outlaw"?"Some sources group the shield and sword sequence as one on-foot phase; the existing Help Center separates them for troubleshooting.":null,helpId:help?.id||null,hasStrategy:Boolean(help),externalGuide:externalBossGuides[slug]||null,hasExternalStrategy:externalBossGuides[slug]?.kind==="strategy",sources:[bossSources.pbz,bossSources.all,...(externalBossGuides[slug]?[externalBossGuides[slug]]:[]),...(knownMain.has(slug)||knownOptional.has(slug)?[bossSources.power]:[])],verification:"Published index · not independently gameplay-tested"};
 }));
 export const bossBySlug=slug=>bosses.find(b=>b.slug===slug)||null;
 export function searchBosses({query="",region="",category=""}={}){
  const q=normalize(query);
  return bosses.filter(b=>(!region||b.region===region)&&(!category||b.category===category)&&(!q||[b.name,...b.aliases,b.regionName,b.family].some(x=>normalize(x).includes(q))));
 }
-export const bossCounts=()=>({total:bosses.length,located:bosses.filter(b=>b.regionName).length,strategies:bosses.filter(b=>b.hasStrategy).length,incomplete:bosses.filter(b=>!b.hasStrategy||!b.location).length});
+export const bossCounts=()=>({total:bosses.length,located:bosses.filter(b=>b.regionName).length,strategies:bosses.filter(b=>b.hasStrategy).length,externalStrategyLinks:bosses.filter(b=>b.hasExternalStrategy).length,incomplete:bosses.filter(b=>!b.hasStrategy||!b.location).length});
 export const combatProblems=[{id:"dodge",label:"Dodging attacks"},{id:"parry",label:"Parrying"},{id:"cues",label:"Recognizing attacks"},{id:"damage",label:"Low damage"},{id:"healing",label:"Healing and survival"},{id:"preparation",label:"Preparation"}];
 // Never synthesize an answer from generic boss classifications or unvalidated keyword matching.
 const problemCue={
