@@ -16,7 +16,7 @@ test("phase 2 publishes only curated, unique objective records",()=>{
   assert.ok(o.sources.length&&o.sources.every(s=>s.url.startsWith("https://")));
   assert.match(o.verification,/not gameplay-tested/i);
   assert.equal(getObjective(o.region,o.sourceNumber)?.id,o.id);
-  for(const id of o.relatedIds)assert.ok(getObjectiveById(id),"Missing related record: "+id);
+  for(const id of o.relatedIds)assert.ok(collectibles.some(c=>c.id===id),"Missing referenced collectible: "+id);
  }
 });
 test("search and missing routes are safe",()=>{
