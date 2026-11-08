@@ -30,6 +30,21 @@ jobs:
         if: ${{ always() }}
         run: timeout --signal=SIGTERM 90s node scripts/live-browser-smoke.mjs
         continue-on-error: true
+      - name: Verify custom production domain revision (read-only)
+        if: ${{ success() }}
+        env:
+          V2_SITE_ORIGIN: https://phantombladeplayerguide.com
+        run: |
+          for attempt in 1 2 3 4 5; do
+            if node scripts/live-smoke.mjs; then
+              echo "Custom domain matches the tested GitHub revision."
+              exit 0
+            fi
+            echo "Custom domain has not caught up with the tested revision ($attempt/5)"
+            sleep 8
+          done
+          exit 1
+        continue-on-error: true
   deploy:
     name: Deploy Cloudflare Worker after passing verification
     needs: verify
