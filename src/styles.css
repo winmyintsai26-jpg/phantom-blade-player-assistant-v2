@@ -298,3 +298,20 @@
 .step-media-fallback{padding:18px;color:#d7e0e6}
 .step-media-fallback[hidden]{display:none}
 @media(max-width:650px){.solver-page{margin:28px auto 65px;padding:0 12px}.manual-progress-row{grid-template-columns:1fr;gap:10px}.solver-controls,.finder-controls{grid-template-columns:1fr}}
+
+/* Phase 4.1: source-referenced boss catalog and per-fight assistance */
+.boss-directory,.boss-detail{max-width:1100px;margin:42px auto 80px;padding:0 18px}
+.boss-directory h1,.boss-detail h1{font-size:clamp(32px,5vw,54px)}
+.boss-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:14px;margin:22px 0}
+.boss-filters label,.boss-panel label{font-size:13px;color:#e4c39b;display:block}
+.boss-filters input,.boss-filters select,.boss-panel select,.boss-panel textarea{width:100%;display:block;min-width:0;background:#18232d;color:#f0f2f4;border:1px solid #566575;border-radius:3px;padding:11px;margin-top:7px;font:inherit}
+.boss-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:12px}
+.boss-card,.boss-panel{border:1px solid #40505d;background:#15202a;padding:19px;border-radius:4px}
+.boss-card{display:block}.boss-card h2{font-size:20px;margin:14px 0 8px;line-height:1.3}.boss-card p{font-size:13px;line-height:1.6}.boss-card small{color:#edc591}
+.boss-card:hover,.boss-card:focus-visible{border-color:#d2a86d}
+.boss-panel{margin:18px 0;padding:24px}.boss-panel h2{font-size:24px}.boss-panel h3{font-size:18px;margin:18px 0 8px}.boss-panel li{margin:8px 0;line-height:1.6}.boss-panel a{color:#e9c08b;text-decoration:underline;text-underline-offset:3px}
+.boss-panel button{padding:12px 18px;background:#b89464;color:#14191e;border:0;border-radius:3px;font-weight:700;margin:14px 0}
+.boss-panel button:disabled{opacity:.5;cursor:not-allowed}
+.boss-panel .boss-attempts{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:12px;border:1px solid #455564;padding:18px;margin:18px 0}
+.boss-attempts legend{color:#e2c393;padding:0 8px}.boss-attempts label{color:#e1e5e8}.boss-attempts input{accent-color:#cf9f62}
+@media(max-width:600px){.boss-directory,.boss-detail{padding:0 12px;margin:28px auto 65px}.boss-filters,.boss-grid{grid-template-columns:1fr}.boss-panel{padding:17px}.boss-card h2{font-size:19px}}
