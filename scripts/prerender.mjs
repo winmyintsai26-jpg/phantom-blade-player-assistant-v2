@@ -39,6 +39,16 @@ const pages=[
  ...regions.map(r=>({route:"/regions/"+r.id+"/",title:r.name+" walkthrough reference",description:r.description,main:'<h1>'+htmlEscape(r.name)+'</h1><p>'+htmlEscape(r.description)+'</p><p>Source-researched, not independently game-tested. '+regionCollectibles(r.id).length+' indexed item routes.</p><h2>Important checkpoints</h2><ul>'+r.checkpoints.map(c=>'<li><strong>'+htmlEscape(c.title)+'</strong> — '+htmlEscape(c.risk)+'</li>').join("")+'</ul><h2>Selected collectibles</h2><ol>'+regionCollectibles(r.id).map(c=>'<li>'+htmlEscape(c.name)+' ('+htmlEscape(c.type)+')</li>').join("")+'</ol>'})),
  ...guides.map(g=>({route:"/guides/"+g.id+"/",title:g.title,description:g.summary,main:'<h1>'+htmlEscape(g.title)+'</h1><p>'+htmlEscape(g.summary)+'</p><p>'+htmlEscape(g.status)+'</p><h2>Steps</h2><ol>'+g.steps.map(s=>'<li>'+htmlEscape(s.title)+'</li>').join("")+'</ol>'}))
 ];
+// Descriptive schema only; no ratings, reviews or claimed gameplay verification.
+function structuredData(page){
+ const canonical=origin+page.route;
+ const isHome=page.route==="/";
+ const website={"@context":"https://schema.org","@type":"WebSite",name:"Phantom Blade Zero Player Assistant",url:origin+"/",description:"Independent source-researched player guidance; not affiliated with S-GAME."};
+ const entity={"@context":"https://schema.org","@type":"WebPage",name:page.title,url:canonical,description:page.description,isPartOf:{"@type":"WebSite",name:website.name,url:website.url},inLanguage:"en"};
+ const crumbs=page.route.split("/").filter(Boolean);
+ const breadcrumb=crumbs.length?{"@context":"https://schema.org","@type":"BreadcrumbList",itemListElement:[{"@type":"ListItem",position:1,name:"Home",item:origin+"/"},...crumbs.map((part,i)=>({"@type":"ListItem",position:i+2,name:i===crumbs.length-1?page.title:part.replace(/-/g," "),item:origin+"/"+crumbs.slice(0,i+1).join("/")+"/"}))]}:null;
+ return [isHome?website:null,entity,breadcrumb].filter(Boolean).map(obj=>'<script type="application/ld+json">'+JSON.stringify(obj).replace(/</g,"\\u003c")+'</script>').join("");
+}
 const unique=new Set();
 for(const page of pages){
  if(unique.has(page.route))throw new Error("Duplicate prerender route: "+page.route);
@@ -49,7 +59,7 @@ for(const page of pages){
  .replace(/<title>[^<]*<\/title>/,'<title>'+htmlEscape(page.title)+' | Phantom Blade Zero V2</title>')
  .replace(/<meta name="description" content="[^"]*">/,'<meta name="description" content="'+meta+'">')
  .replace(/<meta name="robots" content="[^"]*">/,'<meta name="robots" content="'+(publish?"index,follow":"noindex,nofollow")+'">')
- .replace('</head>','<link rel="canonical" href="'+htmlEscape(canonical)+'">'+
+ .replace('</head>','<link rel="canonical" href="'+htmlEscape(canonical)+'">'+structuredData(page)+
    (publisherId?'<meta name="google-adsense-account" content="'+publisherId+'">':'')+
    (adActivationRequested?'<script async crossorigin="anonymous" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='+publisherId+'"></script>':'')+
    '</head>');
