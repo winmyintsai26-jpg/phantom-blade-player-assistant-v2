@@ -2,10 +2,11 @@ import {regions} from "./regions.js";
 import {guides} from "./guides.js";
 import {regionCollectibles} from "./collectibles.js";
 import {objectiveRecords} from "./objectives.js";
+import {supportedStatusIds,validStatusId,readManualStatus,saveManualStatus,progressStatuses} from "./progress-status.js";
 
 export const PREFIX="pbz-v2-progress:";
 export const SPOILER_KEY="pbz-v2-settings:show-spoilers";
-export const BACKUP_VERSION=2;
+export const BACKUP_VERSION=3;
 export const OBJECTIVE_PREFIX="pbz-v2-objective:";
 const objectiveIds=new Set(objectiveRecords.map(o=>o.id));
 const allowed=new Map();
@@ -28,23 +29,33 @@ export function makeProgressBackup(storage,createdAt=new Date().toISOString()){
   for(const id of allowed.keys())progress[id]=parseProgress(id,storage.getItem(PREFIX+id));
   const objectives={};
   for(const id of objectiveIds)objectives[id]=storage.getItem(OBJECTIVE_PREFIX+id)==="true";
-  return {app:"phantom-blade-player-assistant-v2",version:BACKUP_VERSION,createdAt,progress,objectives,settings:{showSpoilers:storage.getItem(SPOILER_KEY)==="true"}};
+  const statuses={};
+  for(const id of supportedStatusIds)statuses[id]=readManualStatus(storage,id);
+  return {app:"phantom-blade-player-assistant-v2",version:BACKUP_VERSION,createdAt,progress,objectives,statuses,settings:{showSpoilers:storage.getItem(SPOILER_KEY)==="true"}};
 }
 export function restoreProgressBackup(storage,backup){
-  if(!backup||typeof backup!=="object"||Array.isArray(backup)||backup.app!=="phantom-blade-player-assistant-v2"||![1,BACKUP_VERSION].includes(backup.version)||!backup.progress||typeof backup.progress!=="object"||Array.isArray(backup.progress))throw new Error("Not a supported Phantom Blade Zero V2 progress backup.");
+  if(!backup||typeof backup!=="object"||Array.isArray(backup)||backup.app!=="phantom-blade-player-assistant-v2"||![1,2,BACKUP_VERSION].includes(backup.version)||!backup.progress||typeof backup.progress!=="object"||Array.isArray(backup.progress))throw new Error("Not a supported Phantom Blade Zero V2 progress backup.");
   const entries=Object.entries(backup.progress);
   for(const [id,steps] of entries){
     if(!validProgressId(id)||!Array.isArray(steps)||steps.length>1000||steps.some(n=>!Number.isSafeInteger(n)||!allowed.get(id).has(n)))throw new Error("Backup has unrecognized or invalid progress.");
   }
-  const objectiveEntries=backup.version===2?Object.entries(backup.objectives||{}):[];
-  if(backup.version===2&&(!backup.objectives||typeof backup.objectives!=="object"||Array.isArray(backup.objectives)))throw new Error("Invalid objective confirmations in backup.");
+  const objectiveEntries=backup.version>=2?Object.entries(backup.objectives||{}):[];
+  if(backup.version>=2&&(!backup.objectives||typeof backup.objectives!=="object"||Array.isArray(backup.objectives)))throw new Error("Invalid objective confirmations in backup.");
   for(const [id,value] of objectiveEntries){
     if(!objectiveIds.has(id)||typeof value!=="boolean")throw new Error("Backup has invalid objective confirmations.");
   }
+  const statusEntries=backup.version===3?Object.entries(backup.statuses||{}):[];
+  if(backup.version===3&&(!backup.statuses||typeof backup.statuses!=="object"||Array.isArray(backup.statuses)))throw new Error("Invalid manual progress states in backup.");
+  for(const [id,status] of statusEntries)if(!validStatusId(id)||!progressStatuses.includes(status))throw new Error("Invalid manual progress state.");
   const updates=entries.map(([id,steps])=>[PREFIX+id,JSON.stringify(sanitizeProgress(id,steps))]);
   // Merge existing progress rather than deleting/checking off unrelated saved work.
   for(const [key,value] of updates){const id=key.slice(PREFIX.length);storage.setItem(key,JSON.stringify(sanitizeProgress(id,[...parseProgress(id,storage.getItem(key)),...JSON.parse(value)])));}
   for(const [id,value] of objectiveEntries)if(value)storage.setItem(OBJECTIVE_PREFIX+id,"true");
+  for(const [id,incoming] of statusEntries){
+    const current=readManualStatus(storage,id);
+    const merged=current==="completed"||incoming==="completed"?"completed":current==="in-progress"||incoming==="in-progress"?"in-progress":"not-started";
+    saveManualStatus(storage,id,merged);
+  }
   if(backup.settings?.showSpoilers===true)storage.setItem(SPOILER_KEY,"true");
   return entries.length;
 }
