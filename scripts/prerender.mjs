@@ -7,6 +7,7 @@ import {guides} from "../src/guides.js";
 import {regionCollectibles} from "../src/collectibles.js";
 import {problems} from "../src/help-problems.js";
 import {objectiveRecords} from "../src/objectives.js";
+import {bosses} from "../src/bosses.js";
 import {sitePages} from "../src/site-pages.js";
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..");
@@ -36,6 +37,7 @@ const pages=[
  '<section aria-labelledby="homepage-heading"><h1 id="homepage-heading">Phantom Blade Zero Player Guide</h1><p>An independent Phantom Blade Zero player guide for players who need a next step, not just a location name. Find starting Bells, prerequisites, acquisition routes, boss troubleshooting and ways to confirm an objective is complete. Published sources support these guides; they have not been independently game-tested.</p>'+
  '<h2>Find help for your next objective</h2><ul>'+
  '<li><a href="/solver/">Solve My Problem with guided troubleshooting</a></li>'+
+ '<li><a href="/bosses/">Browse all documented bosses</a></li>'+
  '<li><a href="/help/">Bosses, map navigation and quest troubleshooting</a></li>'+
  '<li><a href="/objectives/">Item locations, starting Bells and acquisition steps</a></li>'+
  '<li><a href="/progress/">Saved checklists and progress backup</a></li></ul>'+
@@ -44,6 +46,8 @@ const pages=[
  '<h2>Step-by-step objective routes</h2><ul>'+objectiveRecords.map(o=>'<li><a href="'+o.route+'">'+htmlEscape(o.name)+' — '+htmlEscape(o.regionName)+'</a></li>').join("")+'</ul>'+
  '<h2>Guided player workspaces</h2><ul>'+guides.map(g=>'<li><a href="/guides/'+g.id+'/">'+htmlEscape(g.title)+'</a></li>').join("")+'</ul></section>'},
  {route:"/solver/",title:"Solve My Problem",description:"Find a Phantom Blade Zero player solution for a boss, quest, item or navigation problem with an evidence-labeled guide.",main:'<h1>Solve My Problem</h1><p>Select your problem category and an existing documented situation to find a relevant route. Unknown solutions are not guessed.</p><ul>'+problems.map(x=>'<li><a href="/help/'+htmlEscape(x.id)+'/">'+htmlEscape(x.title)+'</a></li>').join("")+'</ul><p><a href="/objectives/">Search the item finder</a></p>'},
+ {route:"/bosses/",title:"Phantom Blade Zero Boss Directory",description:"Browse documented Phantom Blade Zero boss fights across all regions, with sources, alternate names, encounter status and links to available strategies.",main:'<h1>Phantom Blade Zero Boss Directory</h1><p>Browse '+bosses.length+' source-indexed fight groupings across the prologue and every region. Different sources count health bars, phases and repeat encounters differently. A roster listing does not mean a verified combat strategy exists.</p><ul>'+bosses.map(b=>'<li><a href="/bosses/'+b.slug+'/">'+htmlEscape(b.name)+'</a> — '+htmlEscape(b.regionName)+'</li>').join("")+'</ul>'},
+ ...bosses.map(b=>({route:"/bosses/"+b.slug+"/",title:b.name+" — Boss Evidence and Strategy",description:"Boss profile for "+b.name+" in "+b.regionName+": location evidence, alternate names and "+(b.hasStrategy?"existing source-researched troubleshooting.":"current combat strategy research status."),eligibleForSitemap:b.hasStrategy,main:'<article><h1>'+htmlEscape(b.name)+'</h1><p>'+htmlEscape(b.regionName)+' · '+htmlEscape(b.family)+'</p><p>Published encounter index, not independently replayed in-game.</p><h2>Starting location</h2><p>'+htmlEscape(b.location||"Exact starting Bell and arena not yet established.")+'</p><h2>Other published labels</h2><p>'+htmlEscape(b.aliases.length?b.aliases.join("; "):"No alternate encounter labels recorded.")+'</p><h2>Combat strategy</h2><p>'+(b.hasStrategy?'Related, source-researched guidance is available in the <a href="/help/'+b.helpId+'/">existing boss troubleshooting guide</a>.':'Strategy not yet documented. Specific parry timing, attack tells and healing windows have not been independently verified.')+'</p><h2>Research sources</h2><ul>'+b.sources.map(x=>'<li><a href="'+htmlEscape(x.url)+'">'+htmlEscape(x.name)+'</a></li>').join("")+'</ul><p><a href="/bosses/">Return to Boss Directory</a></p></article>'})),
  {route:"/help/",title:"Player Help Center",description:"Solve real player problems in Phantom Blade Zero with searchable boss, combat, navigation and quest guides.",main:'<h1>Player Help Center</h1><p>Find problem-solving walkthroughs.</p><ul>'+problems.map(p=>'<li><a href="/help/'+htmlEscape(p.id)+'/">'+htmlEscape(p.title)+'</a></li>').join("")+'</ul>'},
  ...problems.map(p=>({route:"/help/"+p.id+"/",title:p.title,description:p.summary,main:'<h1>'+htmlEscape(p.title)+'</h1><p>'+htmlEscape(p.summary)+'</p><p>'+htmlEscape(p.status)+'</p><h2>Steps</h2><ol>'+p.steps.map(s=>'<li><h3>'+htmlEscape(s.title)+'</h3><p>'+htmlEscape(s.body)+'</p></li>').join("")+'</ol>'})),
  ...Object.entries(sitePages).map(([id,p])=>({route:"/"+id+"/",title:p.title,description:p.description,main:p.html})),
@@ -73,7 +77,7 @@ for(const page of pages){
  let html=template
  .replace(/<title>[^<]*<\/title>/,'<title>'+htmlEscape(page.route==="/"?page.title:page.title+" | Phantom Blade Zero V2")+'</title>')
  .replace(/<meta name="description" content="[^"]*">/,'<meta name="description" content="'+meta+'">')
- .replace(/<meta name="robots" content="[^"]*">/,'<meta name="robots" content="'+(publish?"index,follow":"noindex,nofollow")+'">')
+ .replace(/<meta name="robots" content="[^"]*">/,'<meta name="robots" content="'+(publish&&page.eligibleForSitemap!==false?"index,follow":"noindex,nofollow")+'">')
  .replace('</head>','<link rel="canonical" href="'+htmlEscape(canonical)+'">'+structuredData(page)+
    (publisherId?'<meta name="google-adsense-account" content="'+publisherId+'">':'')+
    (adActivationRequested?'<script async crossorigin="anonymous" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='+publisherId+'"></script>':'')+
@@ -83,7 +87,7 @@ for(const page of pages){
  await mkdir(path.dirname(dest),{recursive:true});
  await writeFile(dest,html,"utf8");
 }
-const sitemap='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+pages.map(p=>'  <url><loc>'+xmlEscape(origin+p.route)+'</loc></url>').join("\n")+'\n</urlset>\n';
+const sitemap='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+pages.filter(p=>p.eligibleForSitemap!==false).map(p=>'  <url><loc>'+xmlEscape(origin+p.route)+'</loc></url>').join("\n")+'\n</urlset>\n';
 await writeFile(path.join(output,"sitemap.xml"),sitemap,"utf8");
 if(publisherId)await writeFile(path.join(output,"ads.txt"),"google.com, "+publisherId.replace(/^ca-/,"")+", DIRECT, f08c47fec0942fa0\n","utf8");
 const robots=publish?["User-agent: *","Allow: /","Sitemap: "+origin+"/sitemap.xml",""]:["User-agent: *","Disallow: /","Sitemap: "+origin+"/sitemap.xml",""];
