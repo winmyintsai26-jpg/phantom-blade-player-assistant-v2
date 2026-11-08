@@ -23,7 +23,10 @@ const adsenseApproved=process.env.V2_ADSENSE_SITE_APPROVED==="true";
 if(publisherId&&!/^ca-pub-\d{16}$/.test(publisherId))throw new Error("Invalid V2_ADSENSE_PUBLISHER_ID; expected ca-pub- and 16 digits.");
 if(adActivationRequested&&(!adsenseApproved||!approved||!publish||!publisherId))throw new Error("Ads need an approved site, publisher ID, editorial acceptance and indexing enabled.");
 if(publish&&!approved)throw new Error("Indexing requires V2_EDITORIAL_APPROVED=true after editorial acceptance.");
-const origin=(process.env.V2_SITE_ORIGIN||"https://phantom-blade-player-assistant-v2.winmyintsai26.workers.dev").replace(/\/$/,"");
+const configuredOrigin=(process.env.V2_SITE_ORIGIN||"").trim();
+// Canonical is the owned primary domain even on noindex previews; publish gates require explicit configuration.
+const origin=(configuredOrigin||"https://phantombladeplayerguide.com").replace(/\/$/,"");
+if((publish||publisherId||adActivationRequested)&&!configuredOrigin)throw new Error("Set V2_SITE_ORIGIN explicitly before indexing or AdSense configuration.");
 if(!/^https:\/\/[^/]+$/i.test(origin))throw new Error("V2_SITE_ORIGIN must be an HTTPS site origin.");
 if(publish&&origin.endsWith(".workers.dev"))throw new Error("Set a reviewed production custom domain before enabling indexing.");
 if((publisherId||adActivationRequested)&&origin.endsWith(".workers.dev"))throw new Error("Use a custom production domain for AdSense verification; workers.dev is preview-only.");
