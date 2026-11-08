@@ -20,6 +20,13 @@ try{
     const response=await page.goto(origin+route,{waitUntil:"domcontentloaded",timeout:22000});
     if(!response?.ok()) {fail(route+" HTTP "+(response?.status()??"no response"));continue}
     if(await page.locator("h1").count()!==1){fail(route+" missing or duplicate H1");continue}
+    const logo=page.locator('.header a.brand[href="/"] img.brand-logo');
+    if(await logo.count()!==1)fail(route+" missing shared header logo");
+    else{
+      try{await logo.evaluate(img=>img.decode());if(!await logo.evaluate(img=>img.naturalWidth>0))fail(route+" empty logo image")}
+      catch(e){fail(route+" logo failed to load "+String(e))}
+    }
+    if(await page.locator('link[rel="icon"][href="/favicon.png"]').count()!==1)fail(route+" incorrect favicon reference");
     const width=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth}));
     if(width.scroll>width.client+2)fail(route+" horizontal overflow at "+viewport.width+"px");
     const brokenInternal=await page.locator('a[href^="/"]').evaluateAll(a=>a.filter(el=>!el.getAttribute("href")||el.getAttribute("href")==="/undefined/").map(el=>el.outerHTML.slice(0,120)));
