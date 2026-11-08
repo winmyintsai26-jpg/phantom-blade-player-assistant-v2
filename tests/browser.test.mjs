@@ -58,6 +58,31 @@ try{
       assert.deepEqual(errors,[]);
       await page.close();
     });
+    await test("selected header logo and favicon load on desktop and mobile",async()=>{
+      for(const width of [1366,375]){
+        const page=await browser.newPage({viewport:{width,height:812}});
+        for(const route of ["/","/help/","/objectives/","/regions/weeping-creek/","/about/"]){
+          await openPage(page,origin+route);
+          const brand=page.locator('.header a.brand[href="/"]');
+          assert.equal(await brand.count(),1,route);
+          const logo=brand.locator("img.brand-logo");
+          assert.equal(await logo.getAttribute("src"),"/phantom-guide-logo.png");
+          assert.equal(await logo.getAttribute("width"),"56");
+          assert.equal(await logo.getAttribute("height"),"56");
+          assert.equal(await logo.getAttribute("alt"),"");
+          assert.equal(await logo.evaluate(img=>img.complete&&img.naturalWidth>0),true,route+" logo did not load");
+          const favicon=await page.locator('link[rel="icon"]').getAttribute("href");
+          const touch=await page.locator('link[rel="apple-touch-icon"]').getAttribute("href");
+          assert.equal(favicon,"/favicon.png");
+          assert.equal(touch,"/phantom-guide-icon-192.png");
+          assert.equal((await page.request.get(origin+favicon)).status(),200);
+          assert.equal((await page.request.get(origin+touch)).status(),200);
+          const size=await logo.boundingBox();
+          assert.ok(size.width>=38&&size.width<=57,route+" logo size at "+width);
+        }
+        await page.close();
+      }
+    });
     await test("all nine region routes and home page render",async()=>{
       const page=await browser.newPage();
       const errors=[];page.on("pageerror",e=>errors.push(e.message));
