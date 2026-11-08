@@ -28,7 +28,7 @@ test("all generated routes have unique titles, descriptions and canonical",async
 });
 test("homepage gives crawlers a useful player guide and real internal links without JavaScript",async()=>{
  const html=await read("index.html");
- assert.match(html,/<title>Phantom Blade Zero Player Guide \| Bosses, Items &amp; Routes \| Phantom Blade Zero V2<\/title>/);
+ assert.match(html,/<title>Phantom Blade Zero Player Guide \| Bosses, Items &amp; Routes<\/title>/);
  assert.match(html,/<meta name="description" content="[^"]*Phantom Blade Zero player guide[^"]*">/i);
  assert.match(html,/<main id="main" class="prerender-fallback">[\s\S]*?<h1[^>]*>Phantom Blade Zero Player Guide<\/h1>/);
  const linked=[...html.matchAll(/<a href="(\/[^"#?]+\/)"[^>]*>/g)].map(m=>m[1]);
