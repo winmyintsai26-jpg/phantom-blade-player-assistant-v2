@@ -13,7 +13,7 @@ test("invalid, out-of-range and repeated ticks cannot enter progress",()=>{
 test("backup restores across devices without deleting existing ticks",()=>{
  const first=makeStorage({"pbz-v2-progress:items-weeping-creek":"[1,27]","pbz-v2-settings:show-spoilers":"true"});
  const backup=makeProgressBackup(first,"2026-11-07T00:00:00.000Z");
- assert.equal(backup.version,3);
+ assert.equal(backup.version,4);
  assert.deepEqual(backup.progress["items-weeping-creek"],[1,27]);
  const second=makeStorage({"pbz-v2-progress:items-weeping-creek":"[2]"});
  const count=restoreProgressBackup(second,backup);
