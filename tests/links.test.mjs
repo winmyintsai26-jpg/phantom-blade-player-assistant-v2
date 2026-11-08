@@ -6,7 +6,7 @@ import {regions} from "../src/regions.js";
 import {objectiveRecords} from "../src/objectives.js";
 import {sitePages} from "../src/site-pages.js";
 
-const valid=new Set(["/","/help/","/objectives/","/progress/",
+const valid=new Set(["/","/solver/","/help/","/objectives/","/progress/",
  ...Object.keys(sitePages).map(id=>"/"+id+"/"),
  ...guides.map(g=>"/guides/"+g.id+"/"),
  ...problems.map(p=>"/help/"+p.id+"/"),
