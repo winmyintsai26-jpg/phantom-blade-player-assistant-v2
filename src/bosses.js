@@ -142,7 +142,7 @@ export function searchBosses({query="",region="",category=""}={}){
  return bosses.filter(b=>(!region||b.region===region)&&(!category||b.category===category)&&(!q||[b.name,...b.aliases,b.regionName,b.family].some(x=>normalize(x).includes(q))));
 }
 export const bossCounts=()=>({total:bosses.length,located:bosses.filter(b=>b.regionName).length,strategies:bosses.filter(b=>b.hasStrategy).length,externalStrategyLinks:bosses.filter(b=>b.hasExternalStrategy).length,incomplete:bosses.filter(b=>!b.hasStrategy||!b.location).length});
-export const combatProblems=[{id:"dodge",label:"Dodging attacks"},{id:"parry",label:"Parrying"},{id:"cues",label:"Recognizing attacks"},{id:"damage",label:"Low damage"},{id:"healing",label:"Healing and survival"},{id:"preparation",label:"Preparation"}];
+export const combatProblems=[{id:"dodge",label:"Dodging attacks"},{id:"parry",label:"Parrying"},{id:"cues",label:"Recognizing attacks"},{id:"damage-taken",label:"Taking too much damage"},{id:"damage",label:"Low damage"},{id:"healing",label:"Healing and survival"},{id:"transition",label:"Phase transitions"},{id:"counter",label:"Counterattack opportunities"},{id:"arena",label:"Finding the arena"},{id:"preparation",label:"Preparation"}];
 // Never synthesize an answer from generic boss classifications or unvalidated keyword matching.
 const problemCue={
  dodge:/dodge|sideways|avoid|charge path|reposition|move out/i,
