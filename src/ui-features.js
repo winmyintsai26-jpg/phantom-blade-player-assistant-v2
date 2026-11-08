@@ -2,7 +2,6 @@ import {regions} from "./regions.js";
 import {regionCollectibles} from "./collectibles.js";
 import {objectiveRecords} from "./objectives.js";
 import {bosses} from "./bosses.js";
-import {readManualStatus} from "./progress-status.js";
 import {readManualStatus,saveManualStatus,outstandingMissables,regionStatusSummary,progressStatuses} from "./progress-status.js";
 import {SPOILER_KEY,makeProgressBackup,restoreProgressBackup,nextAction} from "./progress.js";
 
