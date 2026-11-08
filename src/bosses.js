@@ -9,7 +9,9 @@ import {externalBossGuides} from "./boss-external-guides.js";
 export const bossSources={
  pbz:{name:"pbz.gg — regional boss index",url:"https://pbz.gg/bosses/"},
  all:{name:"AllThings.How — boss title and encounter roster",url:"https://allthings.how/phantom-blade-zero-bosses/"},
- power:{name:"PowerPyx — trophy and encounter classification",url:"https://www.powerpyx.com/phantom-blade-zero-trophy-guide-roadmap/"}
+ power:{name:"PowerPyx — trophy and encounter classification",url:"https://www.powerpyx.com/phantom-blade-zero-trophy-guide-roadmap/"},
+ officialShowcase:{name:"S-GAME — 2025 Seven Stars showcase (not final patch verification)",url:"https://pbz.s-game.com/en-US/news/year-of-the-snake-trailer/"},
+ officialPatch:{name:"S-GAME — November 2026 boss balance patch 1.0302256",url:"https://pbz.s-game.com/en-US/news/patch-notes-2026-11-03/"}
 };
 // Each tuple is [name, family, aliases/alternate bars]. One record is a fight grouping.
 // An alias is NOT automatically an identical opponent or a gameplay phase.
@@ -132,7 +134,7 @@ const barPhases={
 };
 export const bosses=roster.flatMap(([region,records])=>records.map(([name,family,aliases])=>{
  const slug=normalize(name),helpId=specificHelp[slug],help=problems.find(p=>p.id===helpId)||null;
- return {id:slug,slug,name,aliases,region,regionName:regionLabels[region],family,category:knownMain.has(slug)?"main":knownOptional.has(slug)?"optional":"undetermined",location:locationDetail[slug]||null,phases:help&&help.id==="jing-ye-dismounted"?["Mounted phase","Shield phase","Sword phase"]:(barPhases[slug]||[]),phaseNote:slug==="jing-ye-the-outlaw"?"Some sources group the shield and sword sequence as one on-foot phase; the existing Help Center separates them for troubleshooting.":null,helpId:help?.id||null,hasStrategy:Boolean(help),externalGuide:externalBossGuides[slug]||null,hasExternalStrategy:externalBossGuides[slug]?.kind==="strategy",sources:[bossSources.pbz,bossSources.all,...(externalBossGuides[slug]?[externalBossGuides[slug]]:[]),...(knownMain.has(slug)||knownOptional.has(slug)?[bossSources.power]:[])],verification:"Published index · not independently gameplay-tested"};
+ return {id:slug,slug,name,aliases,region,regionName:regionLabels[region],family,category:knownMain.has(slug)?"main":knownOptional.has(slug)?"optional":"undetermined",location:locationDetail[slug]||null,phases:help&&help.id==="jing-ye-dismounted"?["Mounted phase","Shield phase","Sword phase"]:(barPhases[slug]||[]),phaseNote:slug==="jing-ye-the-outlaw"?"Some sources group the shield and sword sequence as one on-foot phase; the existing Help Center separates them for troubleshooting.":null,helpId:help?.id||null,hasStrategy:Boolean(help),externalGuide:externalBossGuides[slug]||null,hasExternalStrategy:externalBossGuides[slug]?.kind==="strategy",sources:[bossSources.pbz,bossSources.all,...(externalBossGuides[slug]?[externalBossGuides[slug]]:[]),...(knownMain.has(slug)||knownOptional.has(slug)?[bossSources.power]:[]),...(slug==="chief-disciple-of-the-seven-stars-formation"?[bossSources.officialShowcase]:[]),...(slug==="hua-deadly-betrothed"?[bossSources.officialPatch]:[])],officialNote:slug==="chief-disciple-of-the-seven-stars-formation"?"S-GAME's 2025 showcase features coordinated Seven Stars attacks and a String Puppet sequence. This trailer does not independently establish the exact post-release phase timing.":slug==="hua-deadly-betrothed"?"Official patch 1.0302256 reduced grab frequency on Wayfarer and Pathbreaker. Other difficulties were not changed by that specific adjustment.":null,verification:"Published index · not independently gameplay-tested"};
 }));
 export const bossBySlug=slug=>bosses.find(b=>b.slug===slug)||null;
 export function searchBosses({query="",region="",category=""}={}){
