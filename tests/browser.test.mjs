@@ -35,6 +35,16 @@ try{
       assert.match(await page.locator("h1").innerText(),/Reflex Device/);
       assert.match(await page.locator(".objective-intro").innerText(),/Sha-Chi Tower Base/);
       assert.ok(await page.locator(".objective-section").count()>=4);
+      assert.equal(await page.locator("#objective-report-button").isDisabled(),true);
+      await page.locator("#objective-outcome").selectOption("missing");
+      await page.locator("#objective-failed-step").selectOption("0");
+      await page.locator("#objective-missing").fill("Gate key absent");
+      await page.locator("#objective-platform").fill("PC");
+      await page.locator("#objective-version").fill("Test patch");
+      assert.equal(await page.locator("#objective-report-button").isEnabled(),true);
+      const storageBefore=await page.evaluate(()=>localStorage.getItem("pbz-v2-objective:weeping-creek:52"));
+      assert.equal(storageBefore,null);
+
       await page.locator("#objective-completed").check();
       await page.reload({waitUntil:"domcontentloaded"});
       assert.equal(await page.locator("#objective-completed").isChecked(),true);
