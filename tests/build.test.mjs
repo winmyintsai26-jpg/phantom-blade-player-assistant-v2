@@ -9,7 +9,7 @@ import {problems} from "../src/help-problems.js";
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..","dist");
 const read=f=>readFile(path.join(root,f),"utf8");
 const manifest=JSON.parse(await read("build-manifest.json"));
-const expected=["/","/help/","/progress/",...regions.map(r=>"/regions/"+r.id+"/"),...guides.map(g=>"/guides/"+g.id+"/"),...problems.map(p=>"/help/"+p.id+"/")];
+const expected=["/","/help/","/about/","/privacy/","/progress/",...regions.map(r=>"/regions/"+r.id+"/"),...guides.map(g=>"/guides/"+g.id+"/"),...problems.map(p=>"/help/"+p.id+"/")];
 test("all generated routes have unique titles, descriptions and canonical",async()=>{
  assert.equal(new Set(expected).size,expected.length);
  assert.deepEqual(new Set(manifest.routes),new Set(expected));
@@ -43,4 +43,31 @@ test("preview never permits indexing without editorial approval",async()=>{
   assert.equal(manifest.editorialApproved,true);
   assert.match(robots,/Allow: \/\n/);
  }
+});
+
+test("AdSense stays disabled until explicitly enabled and approved",async()=>{
+ const html=await read("index.html");
+ const publisherConfigured=Boolean(manifest.adsenseConfigured);
+ if(!manifest.adsEnabled){
+  assert.ok(!html.includes("pagead/js/adsbygoogle.js"),"Unapproved preview must not request advertising");
+ }else{
+  assert.equal(manifest.indexingEnabled,true);
+  assert.equal(manifest.editorialApproved,true);
+  assert.equal(publisherConfigured,true);
+  assert.match(html,/pagead\/js\/adsbygoogle.js\?client=ca-pub-\d{16}/);
+ }
+ if(publisherConfigured){
+  const ads=await read("ads.txt");
+  assert.match(ads,/^google.com, pub-\d{16}, DIRECT, f08c47fec0942fa0\n$/);
+  assert.match(html,/<meta name="google-adsense-account" content="ca-pub-\d{16}">/);
+ }else{
+  assert.ok(!html.includes('name="google-adsense-account"'));
+ }
+});
+test("About and Privacy pages are readable and have real policy details",async()=>{
+ const about=await read("about/index.html"),privacy=await read("privacy/index.html");
+ assert.match(about,/independent fan-made reference/i);
+ assert.match(privacy,/localStorage/);
+ assert.match(privacy,/Google AdSense/);
+ assert.match(privacy,/Cloudflare Workers/);
 });
