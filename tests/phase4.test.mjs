@@ -65,7 +65,7 @@ test("v3 backup merges states without deleting older completion and rejects inje
  saveManualStatus(one,"objective:weeping-creek:52","completed");
  saveManualStatus(two,"checkpoint:weeping-creek:0","completed");
  const backup=makeProgressBackup(one);
- assert.equal(backup.version,3);
+ assert.equal(backup.version,4);
  restoreProgressBackup(two,backup);
  assert.equal(readManualStatus(two,"checkpoint:weeping-creek:0"),"completed");
  assert.equal(readManualStatus(two,"objective:weeping-creek:52"),"completed");
