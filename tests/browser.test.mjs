@@ -22,6 +22,25 @@ try{
   await waitForServer();
   const browser=await chromium.launch({headless:true});
   try{
+    await test("curated objective search, deep links and local completion check work",async()=>{
+      const page=await browser.newPage();
+      const errors=[];page.on("pageerror",e=>errors.push(e.message));
+      await openPage(page,origin+"/objectives/");
+      assert.equal(await page.locator(".objective-card").count(),9);
+      await page.locator("#objective-search").fill("outlaw trap");
+      assert.ok(await page.locator(".objective-card").count()>=1);
+      await openPage(page,origin+"/regions/weeping-creek/");
+      assert.ok(await page.locator(".objective-entry-link").count()>=1);
+      await openPage(page,origin+"/objectives/weeping-creek/52/");
+      assert.match(await page.locator("h1").innerText(),/Reflex Device/);
+      assert.match(await page.locator(".objective-intro").innerText(),/Sha-Chi Tower Base/);
+      assert.ok(await page.locator(".objective-section").count()>=4);
+      await page.locator("#objective-completed").check();
+      await page.reload({waitUntil:"domcontentloaded"});
+      assert.equal(await page.locator("#objective-completed").isChecked(),true);
+      assert.deepEqual(errors,[]);
+      await page.close();
+    });
     await test("all nine region routes and home page render",async()=>{
       const page=await browser.newPage();
       const errors=[];page.on("pageerror",e=>errors.push(e.message));
