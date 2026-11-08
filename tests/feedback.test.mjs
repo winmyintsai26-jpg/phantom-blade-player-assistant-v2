@@ -17,3 +17,8 @@ test("anonymous and invalid outcomes never create a submitted issue",()=>{
  assert.throws(()=>playerIssueDraft({title:"Jing Ye",slug:"jing-ye-dismounted",outcome:"bogus"}));
  assert.match(playerIssueDraft({title:"Jing Ye",slug:"jing-ye-dismounted",outcome:"solved"}).body,/Not provided/);
 });
+
+test("feedback targets a configured production domain when available",()=>{
+ const body=playerIssueDraft({title:"Guide",slug:"jing-ye-dismounted",outcome:"different",siteOrigin:"https://my-game-guide.example"}).body;
+ assert.match(body,/https:\/\/my-game-guide\.example\/help\/jing-ye-dismounted\//);
+});
