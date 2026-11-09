@@ -7,6 +7,7 @@ import {regions} from "../src/regions.js";
 import {guides} from "../src/guides.js";
 import {objectiveRecords} from "../src/objectives.js";
 import {bosses} from "../src/bosses.js";
+import {BOSS_FALLBACK_ASSET,BOSS_FALLBACK_LABEL} from "../src/boss-images.js";
 import {renderStepImage} from "../src/step-media.js";
 
 const origin="http://127.0.0.1:4178";
@@ -28,6 +29,43 @@ try{
   await waitForServer();
   const browser=await chromium.launch({headless:true});
   try{
+    await test("Phase 4.3 all 59 boss cards and profiles show recognizable branded missing-image status",async()=>{
+      const page=await browser.newPage();
+      const errors=[];page.on("pageerror",e=>errors.push(e.message));
+      await openPage(page,origin+"/bosses/");
+      assert.equal(await page.locator(".boss-card .boss-image").count(),bosses.length);
+      assert.equal(await page.locator('.boss-card [data-image-status="fallback"]').count(),bosses.length);
+      assert.equal(await page.locator(".boss-card .boss-portrait").count(),0);
+      assert.equal(await page.locator(".boss-card .boss-image-fallback span").count(),bosses.length);
+      assert.equal(await page.locator(".boss-card .boss-image-fallback span").first().innerText(),BOSS_FALLBACK_LABEL);
+      const dimensions=await page.locator(".boss-card .boss-image-stage").first().boundingBox();
+      assert.ok(dimensions.width>150&&dimensions.height>70);
+      await page.locator("#boss-query").fill("Jing Ye");
+      assert.equal(await page.locator(".boss-card").count(),1);
+      await openPage(page,origin+"/bosses/jing-ye-the-outlaw/");
+      const figure=page.locator('.boss-image--profile[data-image-status="fallback"]');
+      assert.equal(await figure.count(),1);
+      assert.ok((await figure.innerText()).includes(BOSS_FALLBACK_LABEL));
+      const logo=figure.locator('img[src="'+BOSS_FALLBACK_ASSET+'"]');
+      assert.equal(await logo.getAttribute("alt"),"");
+      await logo.evaluate(image=>new Promise(resolve=>{if(image.complete)return resolve();image.addEventListener("load",resolve,{once:true});image.addEventListener("error",resolve,{once:true})}));
+      assert.equal(await logo.evaluate(image=>image.naturalWidth>0),true);
+      assert.ok(await page.locator("#boss-assistant").isVisible());
+      assert.deepEqual(errors,[]);
+      await page.close();
+    });
+    await test("Phase 4.3 missing brand asset still leaves readable fallback label on mobile",async()=>{
+      const page=await browser.newPage({viewport:{width:375,height:812}});
+      await page.route("**/phantom-guide-logo.png",route=>route.abort());
+      await openPage(page,origin+"/bosses/lei-dang-the-tiger-cannon/");
+      const figure=page.locator('.boss-image--profile[data-image-status="fallback"]');
+      assert.equal(await figure.count(),1);
+      assert.equal(await figure.locator(".boss-image-fallback span").innerText(),BOSS_FALLBACK_LABEL);
+      assert.ok(await page.locator("#boss-problem").count()===1);
+      const sizes=await page.evaluate(()=>[document.documentElement.scrollWidth,document.documentElement.clientWidth]);
+      assert.ok(sizes[0]<=sizes[1]+2,"mobile boss image overflow");
+      await page.close();
+    });
     await test("Phase 4.1 browse full boss roster, filter and follow sourced strategy",async()=>{
       const page=await browser.newPage();
       const errors=[];page.on("pageerror",e=>errors.push(e.message));
