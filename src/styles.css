@@ -315,3 +315,20 @@
 .boss-panel .boss-attempts{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:12px;border:1px solid #455564;padding:18px;margin:18px 0}
 .boss-attempts legend{color:#e2c393;padding:0 8px}.boss-attempts label{color:#e1e5e8}.boss-attempts input{accent-color:#cf9f62}
 @media(max-width:600px){.boss-directory,.boss-detail{padding:0 12px;margin:28px auto 65px}.boss-filters,.boss-grid{grid-template-columns:1fr}.boss-panel{padding:17px}.boss-card h2{font-size:19px}}
+
+
+/* Phase 4.3 — Boss image rights-aware presentation. No placeholder is a boss portrait. */
+.boss-image{margin:0 0 16px;min-width:0}
+.boss-image-stage{position:relative;aspect-ratio:16/10;background:radial-gradient(ellipse at 50% 40%,#26303b 0%,#10151c 70%);border:1px solid #44515e;overflow:hidden;display:grid;place-items:center}
+.boss-image--profile{max-width:780px;margin:16px 0 24px}
+.boss-image--profile .boss-image-stage{aspect-ratio:16/9}
+.boss-image-stage>.boss-portrait{display:block;max-width:100%;width:100%;height:100%;object-fit:contain;object-position:center}
+.boss-image-stage>.boss-portrait[hidden]{display:none}
+.boss-image-fallback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:16px;text-align:center}
+.boss-image-fallback[hidden]{display:none}
+.boss-image-fallback img{display:block;object-fit:contain;width:min(27%,96px);height:auto;aspect-ratio:1;opacity:.65;filter:grayscale(.25)}
+.boss-image--profile .boss-image-fallback img{width:min(24%,124px)}
+.boss-image-fallback span{color:#cbd3da;font-size:12px;font-weight:600;line-height:1.4}
+.boss-image figcaption{color:#9eacbb;font-size:11px;line-height:1.55;margin-top:7px;letter-spacing:normal}
+.boss-card .boss-image figcaption{min-height:2em}
+@media(max-width:600px){.boss-image-fallback img{width:min(24%,76px)}.boss-image-fallback span{font-size:11px}.boss-image--profile{margin:14px 0 20px}.boss-image--profile .boss-image-stage{aspect-ratio:16/10}}
