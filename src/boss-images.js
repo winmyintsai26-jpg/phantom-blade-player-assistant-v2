@@ -20,8 +20,9 @@ const defaultRecord=b=>({
  bossId:b.slug,
  status:"fallback",
  assetPath:null,
- sourceUrl:b.externalGuide?.url||b.sources[0]?.url||null,
- publisher:b.externalGuide?.name||b.sources[0]?.name||null,
+ sourceUrl:null,
+ researchPageUrl:b.externalGuide?.url||b.sources[0]?.url||null,
+ publisher:null,
  license:null,
  permissionBasis:null,
  permissionEvidence:null,
@@ -42,7 +43,7 @@ export const bossImageManifest=Object.freeze(Object.fromEntries(bosses.map(b=>[
 ])));
 
 export const getBossImage=id=>bossImageManifest[id]||null;
-const validLocalPath=value=>typeof value==="string"&&/^\\?\/(?!\/)[a-zA-Z0-9/_-]+\.(?:avif|webp|png|jpe?g)$/i.test(value)&&!value.includes("..");
+const validLocalPath=value=>typeof value==="string"&&/^\/(?!\/)[a-zA-Z0-9/_-]+\.(?:avif|webp|png|jpe?g)$/i.test(value)&&!value.includes("..");
 const validHttps=value=>typeof value==="string"&&/^https:\/\/[^\s/?#]+\.[^\s]+/i.test(value);
 export function canDisplayBossImage(record){
  return Boolean(
