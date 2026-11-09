@@ -152,3 +152,15 @@ test("boss structured breadcrumbs point through the directory",async()=>{
  const trail=[...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(x=>JSON.parse(x[1])).find(x=>x["@type"]==="BreadcrumbList");
  assert.deepEqual(trail.itemListElement.map(x=>new URL(x.item).pathname),["/","/bosses/","/bosses/jing-ye-the-outlaw/"]);
 });
+
+test("every prerendered internal navigation link resolves to a generated route",async()=>{
+ const known=new Set(expected);
+ for(const route of expected){
+  const html=await read(route==="/"?"index.html":route.slice(1)+"index.html");
+  const links=[...html.matchAll(/<a\s+[^>]*href="(\/[^"]*)"/g)].map(m=>m[1]);
+  for(const href of links){
+   const pathname=new URL(href,"https://phantombladeplayerguide.com").pathname;
+   assert.ok(known.has(pathname),route+" links to ungenerated route "+href);
+  }
+ }
+});
