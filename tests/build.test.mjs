@@ -24,7 +24,7 @@ test("all generated routes have unique titles, descriptions and canonical",async
   assert.ok(!titles.has(title),"Duplicate title: "+title);titles.add(title);
   assert.match(html,/<meta name="description" content="[^"]{30,160}">/);
   assert.ok(html.includes('<link rel="canonical" href="'+manifest.origin+route+'">'),route);
-  assert.ok(html.includes('name="robots" content="'+(manifest.indexingEnabled&&(!route.startsWith("/bosses/")||route==="/bosses/"||Boolean(getBossStrategy(bosses.find(x=>"/bosses/"+x.slug+"/"===route)?.slug)?.attacks?.length))?"index,follow":"noindex,nofollow")+'"'),route);
+  assert.ok(html.includes('name="robots" content="'+(manifest.indexingEnabled&&route!=="/progress/"&&(!route.startsWith("/bosses/")||route==="/bosses/"||Boolean(getBossStrategy(bosses.find(x=>"/bosses/"+x.slug+"/"===route)?.slug)?.attacks?.length))?"index,follow":"noindex,nofollow")+'"'),route);
   assert.ok(html.includes('/assets/'),route+" missing compiled assets");
  }
 });
@@ -71,7 +71,7 @@ test("sitemap contains valid XML header and every canonical URL",async()=>{
  assert.ok(xml.endsWith('</urlset>\n'));
  assert.ok(!xml.includes("\\n"),"literal slash-n in XML");
  const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
- const eligible=expected.filter(route=>!route.startsWith("/bosses/")||route==="/bosses/"||bosses.some(x=>getBossStrategy(x.slug)?.attacks?.length&&"/bosses/"+x.slug+"/"===route));
+ const eligible=expected.filter(route=>route!=="/progress/"&&(!route.startsWith("/bosses/")||route==="/bosses/"||bosses.some(x=>getBossStrategy(x.slug)?.attacks?.length&&"/bosses/"+x.slug+"/"===route)));
  assert.deepEqual(new Set(urls),new Set(eligible.map(p=>manifest.origin+p)));
  assert.equal(urls.length,eligible.length);
 });
@@ -111,4 +111,44 @@ test("About and Privacy pages are readable and have real policy details",async()
  assert.match(privacy,/localStorage/);
  assert.match(privacy,/Google AdSense/);
  assert.match(privacy,/Cloudflare Workers/);
+});
+
+test("every sitemap URL is canonical, content-bearing and eligible for indexing only after approval",async()=>{
+ const sitemap=await read("sitemap.xml");
+ const urls=[...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
+ assert.ok(!urls.includes(manifest.origin+"/progress/"));
+ assert.ok(!urls.some(url=>url.endsWith("/bosses/acolyte-hansui/")),"unresearched boss profile must stay out of sitemap");
+ for(const url of urls){
+  const route=new URL(url).pathname;
+  assert.ok(expected.includes(route),"sitemap exposes nonexistent page "+route);
+  const html=await read(route==="/"?"index.html":route.slice(1)+"index.html");
+  assert.ok(html.includes('<link rel="canonical" href="'+url+'">'),"bad canonical "+route);
+  assert.ok(html.includes('<main id="main" class="prerender-fallback">'),"missing prerendered content "+route);
+  assert.ok(html.includes('name="robots" content="'+(manifest.indexingEnabled?"index,follow":"noindex,nofollow")+'"'),"robots mismatch "+route);
+ }
+ const progress=await read("progress/index.html");
+ assert.ok(progress.includes('name="robots" content="noindex,nofollow"'));
+});
+test("source-researched guide pages expose actual instructions, checks and references without JavaScript",async()=>{
+ const help=await read("help/jing-ye-dismounted/index.html");
+ assert.match(help,/<h2>Before starting<\/h2>/);
+ assert.match(help,/<h2>Steps and checks<\/h2>/);
+ assert.match(help, /<strong>Check:<\/strong>/);
+ assert.match(help, /<h2>Sources and limitations<\/h2>/);
+ const region=await read("regions/weeping-creek/index.html");
+ assert.match(region,/<h2>Important checkpoints<\/h2>/);
+ assert.match(region, /<h2>Documented bosses<\/h2>/);
+ assert.match(region, /Regional collectible source reference/);
+ const guide=await read("guides/healers-legacy/index.html");
+ assert.match(guide, /<h2>Steps and checks<\/h2>/);
+ assert.match(guide, /<strong>Check:<\/strong>/);
+ assert.match(guide, /<h2>Sources and limitations<\/h2>/);
+ const objective=await read("objectives/weeping-creek/52/index.html");
+ assert.match(objective, /<h2>Missable or version-sensitive notes<\/h2>/);
+ assert.match(objective, /<h2>Sources and limitations<\/h2>/);
+});
+test("boss structured breadcrumbs point through the directory",async()=>{
+ const html=await read("bosses/jing-ye-the-outlaw/index.html");
+ const trail=[...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(x=>JSON.parse(x[1])).find(x=>x["@type"]==="BreadcrumbList");
+ assert.deepEqual(trail.itemListElement.map(x=>new URL(x.item).pathname),["/","/bosses/","/bosses/jing-ye-the-outlaw/"]);
 });
