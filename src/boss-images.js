@@ -3,6 +3,7 @@
 // A published URL, an official screenshot, or attribution alone DOES NOT grant reuse rights.
 // Do not copy screenshots from index sites or gameplay videos without authorization.
 import {bosses} from "./bosses.js";
+import {portraitCandidates} from "./boss-portrait-candidates.js";
 
 export const BOSS_FALLBACK_ASSET="/phantom-guide-logo.png";
 export const BOSS_FALLBACK_LABEL="No verified boss image available";
@@ -21,7 +22,9 @@ const defaultRecord=b=>({
  status:"fallback",
  assetPath:null,
  sourceUrl:null,
- researchPageUrl:b.externalGuide?.url||b.sources[0]?.url||null,
+ researchPageUrl:portraitCandidates[b.slug]?.sourcePageUrl||b.externalGuide?.url||b.sources[0]?.url||null,
+ researchPortraitUrl:portraitCandidates[b.slug]?.candidateImageUrl||null,
+ researchPortraitStatus:portraitCandidates[b.slug]?.imageReferenceStatus||"unresearched",
  publisher:null,
  license:null,
  permissionBasis:null,
