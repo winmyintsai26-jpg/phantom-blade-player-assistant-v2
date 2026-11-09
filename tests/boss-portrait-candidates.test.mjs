@@ -8,12 +8,12 @@ import {bossImageHtml} from "../src/boss-image-ui.js";
 test("each documented fight has a matched, exact research-page candidate record",()=>{
  assert.equal(bosses.length,59);
  assert.equal(Object.keys(portraitCandidates).length,59);
- assert.deepEqual(portraitCandidateStats(),{researched:59,labeledReferenceImages:57,noPortraitFound:2,approvedForDisplay:0});
+ assert.deepEqual(portraitCandidateStats(),{researched:59,labeledReferenceImages:59,noPortraitFound:0,approvedForDisplay:0});
  assert.equal(new Set(Object.keys(portraitCandidates)).size,59);
  for(const boss of bosses){
   const c=portraitCandidates[boss.slug];
   assert.equal(c?.bossId,boss.slug);
-  assert.match(c.sourcePageUrl,/^https:\/\/pbz\.gg\/bosses\/[a-z0-9-]+\/$/);
+  assert.match(c.sourcePageUrl,/^https:\/\/(?:pbz\.gg\/bosses\/|wikily\.gg\/phantom-blade-zero\/bosses\/)[a-z0-9-]+\/?$/);
   assert.equal(c.permissionStatus,"not-authorized-for-republication");
   assert.equal(c.mayHost,false);
   assert.equal(c.mayEmbed,false);
@@ -24,14 +24,14 @@ test("each documented fight has a matched, exact research-page candidate record"
 });
 test("no false portrait references or accidental duplicate image assignments",()=>{
  const found=Object.values(portraitCandidates).filter(c=>c.candidateImageUrl);
- assert.equal(found.length,57);
- assert.equal(new Set(found.map(c=>c.candidateImageUrl)).size,57);
+ assert.equal(found.length,59);
+ assert.equal(new Set(found.map(c=>c.candidateImageUrl)).size,59);
  for(const c of found){
-  assert.match(c.candidateImageUrl,/^https:\/\/pbz\.gg\/_ipx\//);
-  assert.match(c.candidateImageUrl,/\/media\/game\/bosses\/[a-z0-9-]+-portrait-\d+\.webp$/);
+  assert.match(c.candidateImageUrl,/^https:\/\/(?:pbz\.gg\/_ipx\/|wikily\.gg\/api\/media\/)/);
+  assert.match(c.candidateImageUrl,/\.webp(?:\?.*)?$/);
  }
  const missing=Object.values(portraitCandidates).filter(c=>!c.candidateImageUrl);
- assert.deepEqual(missing.map(c=>c.bossId).sort(),["iron-butcher-the-frenzied-brute","soulclaimer-elite-shadow-warden"]);
+ assert.deepEqual(missing.map(c=>c.bossId).sort(),[]);
  assert.equal(bossImageCounts().approved,0);
 });
 test("research reference links stay external and never load unlicensed candidate media",()=>{
