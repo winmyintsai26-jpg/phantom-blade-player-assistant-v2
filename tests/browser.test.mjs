@@ -51,6 +51,10 @@ try{
       await logo.evaluate(image=>new Promise(resolve=>{if(image.complete)return resolve();image.addEventListener("load",resolve,{once:true});image.addEventListener("error",resolve,{once:true})}));
       assert.equal(await logo.evaluate(image=>image.naturalWidth>0),true);
       assert.ok(await page.locator("#boss-assistant").isVisible());
+      assert.equal(await figure.locator('a[href="https://pbz.gg/bosses/jing-ye/"]').count(),1);
+      assert.ok((await figure.innerText()).includes("not licensed for reuse"));
+      await openPage(page,origin+"/bosses/soulclaimer-elite-shadow-warden/");
+      assert.equal(await page.locator('a[href="https://wikily.gg/phantom-blade-zero/bosses/soulclaimer-elite-shadow-warden"]').count(),1);
       assert.deepEqual(errors,[]);
       await page.close();
     });
