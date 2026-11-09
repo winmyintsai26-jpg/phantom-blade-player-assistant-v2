@@ -10,6 +10,6 @@ export function bossImageHtml(boss,{profile=false}={}){
  const picture=approved?'<img class="boss-portrait" src="'+esc(img.assetPath)+'" alt="'+esc(img.description)+'" loading="'+(profile?'eager':'lazy')+'" decoding="async" width="'+img.width+'" height="'+img.height+'" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><div class="boss-image-fallback" hidden><img src="'+esc(BOSS_FALLBACK_ASSET)+'" alt="" loading="lazy" decoding="async" width="124" height="124"><span>'+label+'</span></div>':'';
  return '<figure class="boss-image boss-image--'+variant+'" data-boss-image-id="'+esc(boss.slug)+'" data-image-status="'+(approved?'approved':'fallback')+'">'+
  '<div class="boss-image-stage">'+(approved?picture:fallback)+'</div>'+
- (approved?'<figcaption>'+esc(img.attribution)+' · '+esc(img.license)+(img.variant?' · '+esc(img.variant):'')+'</figcaption>':'<figcaption>Branded placeholder only — not a portrait or game screenshot.</figcaption>')+
+ (approved?'<figcaption>'+esc(img.attribution)+' · '+esc(img.license)+(img.variant?' · '+esc(img.variant):'')+'</figcaption>':'<figcaption>Branded placeholder only — not a portrait or game screenshot.'+(profile&&img.researchPortraitUrl?'<span class="boss-external-image-reference"> <a href="'+esc(img.researchPageUrl)+'" target="_blank" rel="noopener noreferrer">View the third-party labeled boss portrait on its source page ↗</a> (external; not licensed for reuse here)</span>':'')+'</figcaption>')+
  '</figure>';
 }
