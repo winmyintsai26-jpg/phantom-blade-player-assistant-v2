@@ -38,7 +38,7 @@ const leads=[
  ["chang-hong-the-thunder-spear","chang-hong","chang-hong-the-thunder-spear-portrait-960.webp",null],
  ["acolyte-lei-ting","acolyte-lei-ting","acolyte-lei-ting-portrait-960.webp",null],
  ["flame-the-mask-bound-lion-dance-grandmaster","flame","flame-the-mask-bound-lion-dance-grandmaster-portrait-960.webp",null],
- ["soulclaimer-elite-shadow-warden","soulclaimer",null,"Only a generic chapter icon was observed; no boss portrait candidate"],
+ ["soulclaimer-elite-shadow-warden","soulclaimer","https://wikily.gg/api/media/6b8c9f08-c6f9-496c-a3ee-82c7b2488602/2026-10-29/b47993c9-a230-43b3-a2c4-64992ab66e83-icon-t_bp_monster_guichai_yellow_shuanggou_h.webp?dpl=ae5bd593-a8eb-4e34-9532-8a543dd1d89b&trim=1","Soulclaimer Pangzhen gallery; alternate labeled Wikily record, visual inspection pending"],
  ["zhu-yuan-the-searing-blade","zhu-yuan","zhu-yuan-the-searing-blade-portrait-960.webp",null],
  ["corpse-eating-xue","corpse-eating-xue","corpse-eating-xue-portrait-960.webp",null],
  ["wan-jun-the-coppermaul","wan-jun","wan-jun-the-coppermaul-portrait-960.webp",null],
@@ -53,7 +53,7 @@ const leads=[
  ["blizzard-blademaster","blizzard-blademaster","blizzard-blademaster-portrait-960.webp",null],
  ["heartpiercer-elite-shadow-warden","heartpiercer","heartpiercer-elite-shadow-warden-portrait-960.webp",null],
  ["grief-stricken-jin","grief-stricken-jin","grief-stricken-jin-portrait-960.webp",null],
- ["iron-butcher-the-frenzied-brute","iron-butcher",null,"Only a generic chapter icon was observed; no boss portrait candidate"],
+ ["iron-butcher-the-frenzied-brute","iron-butcher","https://wikily.gg/api/media/6b8c9f08-c6f9-496c-a3ee-82c7b2488602/2026-10-29/07fec6e9-af7c-49ca-9a33-5b8096a4041c-icon-t_bp_monster_mobman_elite_h.webp?dpl=ae5bd593-a8eb-4e34-9532-8a543dd1d89b&trim=1","Iron Butcher gallery; alternate Wikily named icon, visual inspection pending"],
  ["bi-feng-giant-saber-commander","bi-feng","bi-feng-giant-saber-commander-portrait-960.webp",null],
  ["kui-yanyan-the-deranged","kui-yanyan","kui-yanyan-the-deranged-portrait-960.webp",null],
  ["jade-face","jade-face","jade-face-portrait-960.webp",null],
@@ -69,10 +69,15 @@ const leads=[
 export const portraitCandidates=Object.freeze(Object.fromEntries(leads.map(([bossId,pageSlug,portraitFile,variant])=>[
  bossId,Object.freeze({
   bossId,
-  sourcePageUrl:"https://pbz.gg/bosses/"+pageSlug+"/",
-  candidateImageUrl:portraitFile?
-   "https://pbz.gg/_ipx/w_320&f_webp&q_80/media/game/bosses/"+portraitFile:null,
-  sourceSite:"pbz.gg — independent community database, not original rights holder",
+  sourcePageUrl:portraitFile?.startsWith("https://wikily.gg/")?
+   "https://wikily.gg/phantom-blade-zero/bosses/"+bossId:
+   "https://pbz.gg/bosses/"+pageSlug+"/",
+  candidateImageUrl:portraitFile?(portraitFile.startsWith("https://")?
+   portraitFile:"https://pbz.gg/_ipx/w_320&f_webp&q_80/media/game/bosses/"+portraitFile):null,
+  sourceSite:portraitFile?.startsWith("https://wikily.gg/")?
+   "Wikily — independent game archive, not original rights holder":
+   "pbz.gg — independent community database, not original rights holder",
+  originalPbzResearchPage:"https://pbz.gg/bosses/"+pageSlug+"/",
   underlyingGameRightsHolder:"PARAWULIN PRODUCTION LIMITED / S-GAME",
   variant,
   imageReferenceStatus:portraitFile?"source-alt-labeled; visual verification pending":"no-portrait-on-researched-page",
